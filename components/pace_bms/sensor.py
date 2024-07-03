@@ -1,7 +1,15 @@
 import esphome.codegen as cg
 from esphome.components import sensor
 import esphome.config_validation as cv
-from esphome.const import DEVICE_CLASS_VOLTAGE, ICON_EMPTY, UNIT_VOLTS
+from esphome.const import ( CONF_ID, 
+    DEVICE_CLASS_VOLTAGE,
+    ICON_EMPTY,
+    UNIT_VOLTS,
+    CONF_RESOLUTION,
+    DEVICE_CLASS_TEMPERATURE,
+    STATE_CLASS_MEASUREMENT,
+    UNIT_CELSIUS,
+)
 
 from . import CONF_PACE_BMS_ID, PaceBMS
 

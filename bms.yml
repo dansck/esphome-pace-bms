@@ -1,18 +1,4 @@
 esphome:
-  name: pace_bms
-
-
-external_components:
-  - source: github://dansck/esphome-pace-bms@main
-    components: [bms-pace]
-
-uart:
-  id: uart_bus
-  tx_pin: GPIO1
-  rx_pin: GPIO3
-  baud_rate: 9600
-
-esphome:
   name: bms1
   friendly_name: bms1
 
@@ -40,108 +26,154 @@ wifi:
   password: !secret wifi_password
 
 external_components:
-  - source: github://dansck/esphome-pace-bms@main
-    components: [bms-pace]
-    refresh: "60s"
+  - source:
+      type: git
+      url: https://github.com/dansck/esphome-pace-bms
+      ref: main
+    components: [pace_bms]
+    refresh: "10s"
 
 uart:
   id: uart_bus
   tx_pin: GPIO1
   rx_pin: GPIO3
   baud_rate: 9600  # Nastavení odpovídající BAUD_RATE z Python skriptu
-    
-pace_bms:
-  id: my_bms
 
-  voltage_sensor:
-    name: "Pack Voltage"
-  current_sensor:
-    name: "Pack Current"
-  remaining_capacity_sensor:
-    name: "Remaining Capacity"
-  nominal_capacity_sensor:
-    name: "Nominal Capacity"
-  full_capacity_sensor:
-    name: "Full Capacity"
-  cycles_sensor:
-    name: "Charge Cycles"
-  state_of_health_sensor:
-    name: "State of Health"
-  state_of_charge_sensor:
-    name: "State of Charge"
-  cell_max_volt_diff_sensor:
-    name: "Cell Max Voltage Difference"
-  charge_fet_sensor:
-    name: "Charge FET Status"
-  discharge_fet_sensor:
-    name: "Discharge FET Status"
-  balancing1_sensor:
-    name: "Balancing Status 1"
-  balancing2_sensor:
-    name: "Balancing Status 2"
-  ac_in_sensor:
-    name: "AC In Status"
-  current_limit_sensor:
-    name: "Current Limit Status"
-  heart_sensor:
-    name: "Heart Status"
-  pack_indicate_sensor:
-    name: "Pack Indicate Status"
-  protection_discharge_current_sensor:
-    name: "Protection Discharge Current"
-  protection_charge_current_sensor:
-    name: "Protection Charge Current"
-  protection_short_circuit_sensor:
-    name: "Protection Short Circuit"
-  reverse_sensor:
-    name: "Reverse Protection"
+pace_bms:
+  id: ufo_bms
+  
+sensor:
+  - platform: pace_bms
+    voltage_sensor:
+      name: "Pack Voltage" 
+  - platform: pace_bms
+    current_sensor:
+      name: "Pack Current"
+  - platform: pace_bms
+    remaining_capacity_sensor:
+      name: "Remaining Capacity"
+  - platform: pace_bms
+    nominal_capacity_sensor:
+      name: "Nominal Capacity"
+  - platform: pace_bms
+    full_capacity_sensor:
+      name: "Full Capacity"
+  - platform: pace_bms
+    cycles_sensor:
+      name: "Charge Cycles"
+  - platform: pace_bms
+    state_of_health_sensor:
+      name: "State of Health"
+  - platform: pace_bms
+    state_of_charge_sensor:
+      name: "State of Charge"
+  - platform: pace_bms
+    cell_max_volt_diff_sensor:
+      name: "Cell Max Voltage Difference"
+  - platform: pace_bms
+    charge_fet_sensor:
+      name: "Charge FET Status"
+  - platform: pace_bms
+    discharge_fet_sensor:
+      name: "Discharge FET Status"
+  - platform: pace_bms
+    balancing1_sensor:
+      name: "Balancing Status 1"
+  - platform: pace_bms
+    balancing2_sensor:
+      name: "Balancing Status 2"
+  - platform: pace_bms
+    ac_in_sensor:
+      name: "AC In Status"
+  - platform: pace_bms
+    current_limit_sensor:
+      name: "Current Limit Status"
+  - platform: pace_bms
+    heart_sensor:
+      name: "Heart Status"
+  - platform: pace_bms
+    pack_indicate_sensor:
+      name: "Pack Indicate Status"
+  - platform: pace_bms
+    protection_discharge_current_sensor:
+      name: "Protection Discharge Current"
+  - platform: pace_bms
+    protection_charge_current_sensor:
+      name: "Protection Charge Current"
+  - platform: pace_bms
+    protection_short_circuit_sensor:
+      name: "Protection Short Circuit"
+  - platform: pace_bms
+    reverse_sensor:
+      name: "Reverse Protection"
 
   # Konfigurace senzorů pro napětí jednotlivých článků
-  cell_voltage_sensor_1:
-    name: "Cell Voltage 1"
-  cell_voltage_sensor_2:
-    name: "Cell Voltage 2"
-  cell_voltage_sensor_3:
-    name: "Cell Voltage 3"
-  cell_voltage_sensor_4:
-    name: "Cell Voltage 4"
-  cell_voltage_sensor_5:
-    name: "Cell Voltage 5"
-  cell_voltage_sensor_6:
-    name: "Cell Voltage 6"
-  cell_voltage_sensor_7:
-    name: "Cell Voltage 7"
-  cell_voltage_sensor_8:
-    name: "Cell Voltage 8"
-  cell_voltage_sensor_9:
-    name: "Cell Voltage 9"
-  cell_voltage_sensor_10:
-    name: "Cell Voltage 10"
-  cell_voltage_sensor_11:
-    name: "Cell Voltage 11"
-  cell_voltage_sensor_12:
-    name: "Cell Voltage 12"
-  cell_voltage_sensor_13:
-    name: "Cell Voltage 13"
-  cell_voltage_sensor_14:
-    name: "Cell Voltage 14"
-  cell_voltage_sensor_15:
-    name: "Cell Voltage 15"
+  - platform: pace_bms
+    cell_voltage_sensor_1:
+      name: "Cell Voltage 1"
+  - platform: pace_bms
+    cell_voltage_sensor_2:
+      name: "Cell Voltage 2"
+  - platform: pace_bms
+    cell_voltage_sensor_3:
+      name: "Cell Voltage 3"
+  - platform: pace_bms
+    cell_voltage_sensor_4:
+      name: "Cell Voltage 4"
+  - platform: pace_bms
+    cell_voltage_sensor_5:
+      name: "Cell Voltage 5"
+  - platform: pace_bms
+    cell_voltage_sensor_6:
+      name: "Cell Voltage 6"
+  - platform: pace_bms
+    cell_voltage_sensor_7:
+      name: "Cell Voltage 7"
+  - platform: pace_bms
+    cell_voltage_sensor_8:
+      name: "Cell Voltage 8"
+  - platform: pace_bms
+    cell_voltage_sensor_9:
+      name: "Cell Voltage 9"
+  - platform: pace_bms
+    cell_voltage_sensor_10:
+      name: "Cell Voltage 10"
+  - platform: pace_bms
+    cell_voltage_sensor_11:
+      name: "Cell Voltage 11"
+  - platform: pace_bms
+    cell_voltage_sensor_12:
+      name: "Cell Voltage 12"
+  - platform: pace_bms
+    cell_voltage_sensor_13:
+      name: "Cell Voltage 13"
+  - platform: pace_bms
+    cell_voltage_sensor_14:
+      name: "Cell Voltage 14"
+  - platform: pace_bms
+    cell_voltage_sensor_15:
+      name: "Cell Voltage 15"
   #cell_voltage_sensor_16:
   #  name: "Cell Voltage 16"
   #cell_voltage_sensor_17:
   #  name: "Cell Voltage 17"
 
   # Konfigurace teplotních senzorů
-  temperature_sensor_1:
-    name: "Temperature 1"
-  temperature_sensor_2:
-    name: "Temperature 2"
-  temperature_sensor_3:
-    name: "Temperature 3"
-  temperature_sensor_4:
-    name: "Temperature 4"
-  temperature_sensor_5:
-    name: "Temperature 5"
-  temperature_sensor_6:
-    name: "Temperature 6"
+  - platform: pace_bms
+    temperature_sensor_1:
+      name: "Temperature 1"
+  - platform: pace_bms
+    temperature_sensor_2:
+      name: "Temperature 2"
+  - platform: pace_bms
+    temperature_sensor_3:
+      name: "Temperature 3"
+  - platform: pace_bms
+    temperature_sensor_4:
+      name: "Temperature 4"
+  - platform: pace_bms
+    temperature_sensor_5:
+      name: "Temperature 5"
+  - platform: pace_bms
+    temperature_sensor_6:
+      name: "Temperature 6"

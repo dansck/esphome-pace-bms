@@ -1,10 +1,21 @@
 import esphome.codegen as cg
 import esphome.config_validation as cv
 from esphome.components import sensor, uart
-from esphome.const import CONF_ID, DEVICE_CLASS_VOLTAGE, ICON_EMPTY, UNIT_VOLTS
+from esphome.const import (
+    CONF_ID,
+    DEVICE_CLASS_TEMPERATURE,
+    STATE_CLASS_MEASUREMENT,
+    CONF_UNIT_OF_MEASUREMENT,
+    CONF_DEVICE_CLASS,
+    UNIT_CELSIUS,
+    UNIT_PERCENT,
+    DEVICE_CLASS_VOLTAGE,
+    UNIT_VOLTS
+)
+CODEOWNERS = ["dansck"]
 
 DEPENDENCIES = ['uart']
-AUTO_LOAD = ['sensor']
+#AUTO_LOAD = ['sensor']
 CONF_PACE_BMS_ID = "pace_bms_id"
 
 pace_bms_ns = cg.esphome_ns.namespace('pace_bms')
@@ -16,7 +27,7 @@ CONFIG_SCHEMA = cv.All(
         cv.Optional('voltage_sensor'): sensor.sensor_schema(
             unit_of_measurement=UNIT_VOLTS,
             icon=ICON_EMPTY,
-            accuracy_decimals=2,
+            accuracy_decimals=0,
             device_class=DEVICE_CLASS_VOLTAGE,
         ),
         cv.Optional('current_sensor'): sensor.sensor_schema(),
