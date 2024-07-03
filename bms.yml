@@ -12,127 +12,136 @@ uart:
   rx_pin: GPIO3
   baud_rate: 9600
 
-sensor:
-  - platform: custom
-    lambda: |-
-      auto pace_bms = new PaceBMS(id(uart_bus));
-      App.register_component(pace_bms);
-      std::vector<Sensor*> sensors = {
-        pace_bms->voltage_sensor,
-        pace_bms->current_sensor,
-        pace_bms->remaining_capacity_sensor,
-        pace_bms->nominal_capacity_sensor,
-        pace_bms->full_capacity_sensor,
-        pace_bms->cycles_sensor,
-        pace_bms->state_of_health_sensor,
-        pace_bms->state_of_charge_sensor,
-        pace_bms->cell_max_volt_diff_sensor,
-        pace_bms->charge_fet_sensor,
-        pace_bms->discharge_fet_sensor,
-        pace_bms->balancing1_sensor,
-        pace_bms->balancing2_sensor,
-        pace_bms->ac_in_sensor,
-        pace_bms->current_limit_sensor,
-        pace_bms->heart_sensor,
-        pace_bms->pack_indicate_sensor,
-        pace_bms->protection_discharge_current_sensor,
-        pace_bms->protection_charge_current_sensor,
-        pace_bms->protection_short_circuit_sensor,
-        pace_bms->reverse_sensor
-      };
-      for (auto sensor : pace_bms->cell_voltage_sensors) {
-        sensors.push_back(sensor);
-      }
-      for (auto sensor : pace_bms->temperature_sensors) {
-        sensors.push_back(sensor);
-      }
-      return sensors;
-    sensors:
-      - name: "BMS Voltage"
-        unit_of_measurement: "V"
-      - name: "BMS Current"
-        unit_of_measurement: "A"
-      - name: "Remaining Capacity"
-        unit_of_measurement: "mAh"
-      - name: "Nominal Capacity"
-        unit_of_measurement: "mAh"
-      - name: "Full Capacity"
-        unit_of_measurement: "mAh"
-      - name: "Cycle Count"
-        unit_of_measurement: "cycles"
-      - name: "State of Health"
-        unit_of_measurement: "%"
-      - name: "State of Charge"
-        unit_of_measurement: "%"
-      - name: "Cell Max Volt Diff"
-        unit_of_measurement: "mV"
-      - name: "Charge FET"
-        unit_of_measurement: ""
-      - name: "Discharge FET"
-        unit_of_measurement: ""
-      - name: "Balancing 1"
-        unit_of_measurement: ""
-      - name: "Balancing 2"
-        unit_of_measurement: ""
-      - name: "AC In"
-        unit_of_measurement: ""
-      - name: "Current Limit"
-        unit_of_measurement: ""
-      - name: "Heart"
-        unit_of_measurement: ""
-      - name: "Pack Indicate"
-        unit_of_measurement: ""
-      - name: "Protection Discharge Current"
-        unit_of_measurement: ""
-      - name: "Protection Charge Current"
-        unit_of_measurement: ""
-      - name: "Protection Short Circuit"
-        unit_of_measurement: ""
-      - name: "Reverse"
-        unit_of_measurement: ""
-      - name: "Cell Voltage 1"
-        unit_of_measurement: "V"
-      - name: "Cell Voltage 2"
-        unit_of_measurement: "V"
-      - name: "Cell Voltage 3"
-        unit_of_measurement: "V"
-      - name: "Cell Voltage 4"
-        unit_of_measurement: "V"
-      - name: "Cell Voltage 5"
-        unit_of_measurement: "V"
-      - name: "Cell Voltage 6"
-        unit_of_measurement: "V"
-      - name: "Cell Voltage 7"
-        unit_of_measurement: "V"
-      - name: "Cell Voltage 8"
-        unit_of_measurement: "V"
-      - name: "Cell Voltage 9"
-        unit_of_measurement: "V"
-      - name: "Cell Voltage 10"
-        unit_of_measurement: "V"
-      - name: "Cell Voltage 11"
-        unit_of_measurement: "V"
-      - name: "Cell Voltage 12"
-        unit_of_measurement: "V"
-      - name: "Cell Voltage 13"
-        unit_of_measurement: "V"
-      - name: "Cell Voltage 14"
-        unit_of_measurement: "V"
-      - name: "Cell Voltage 15"
-        unit_of_measurement: "V"
-      - name: "Cell Voltage 16"
-        unit_of_measurement: "V"
-      - name: "Cell Voltage 17"
-        unit_of_measurement: "V"
-      - name: "Temperature 1"
-        unit_of_measurement: "°C"
-      - name: "Temperature 2"
-        unit_of_measurement: "°C"
-      - name: "Temperature 3"
-        unit_of_measurement: "°C"
-      - name: "Temperature 4"
-        unit_of_measurement: "°C"
-      - name: "Temperature 5"
-        unit_of_measurement: "°C"
-      - name: "Temperature 6"
-        unit_of_measurement: "°C"
+esphome:
+  name: bms1
+  friendly_name: bms1
+
+esp32:
+  board: esp32dev
+  framework:
+    #type: arduino
+    type: esp-idf
+    version: recommended
+
+# Enable logging
+logger:
+
+# Enable Home Assistant API
+api:
+  encryption:
+    key: "aaaaaa"
+
+ota:
+  - platform: esphome
+    password: "aaaaaa"
+
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
+
+external_components:
+  - source: github://dansck/esphome-pace-bms@main
+    components: [bms-pace]
+    refresh: "60s"
+
+uart:
+  id: uart_bus
+  tx_pin: GPIO1
+  rx_pin: GPIO3
+  baud_rate: 9600  # Nastavení odpovídající BAUD_RATE z Python skriptu
+    
+pace_bms:
+  id: my_bms
+
+  voltage_sensor:
+    name: "Pack Voltage"
+  current_sensor:
+    name: "Pack Current"
+  remaining_capacity_sensor:
+    name: "Remaining Capacity"
+  nominal_capacity_sensor:
+    name: "Nominal Capacity"
+  full_capacity_sensor:
+    name: "Full Capacity"
+  cycles_sensor:
+    name: "Charge Cycles"
+  state_of_health_sensor:
+    name: "State of Health"
+  state_of_charge_sensor:
+    name: "State of Charge"
+  cell_max_volt_diff_sensor:
+    name: "Cell Max Voltage Difference"
+  charge_fet_sensor:
+    name: "Charge FET Status"
+  discharge_fet_sensor:
+    name: "Discharge FET Status"
+  balancing1_sensor:
+    name: "Balancing Status 1"
+  balancing2_sensor:
+    name: "Balancing Status 2"
+  ac_in_sensor:
+    name: "AC In Status"
+  current_limit_sensor:
+    name: "Current Limit Status"
+  heart_sensor:
+    name: "Heart Status"
+  pack_indicate_sensor:
+    name: "Pack Indicate Status"
+  protection_discharge_current_sensor:
+    name: "Protection Discharge Current"
+  protection_charge_current_sensor:
+    name: "Protection Charge Current"
+  protection_short_circuit_sensor:
+    name: "Protection Short Circuit"
+  reverse_sensor:
+    name: "Reverse Protection"
+
+  # Konfigurace senzorů pro napětí jednotlivých článků
+  cell_voltage_sensor_1:
+    name: "Cell Voltage 1"
+  cell_voltage_sensor_2:
+    name: "Cell Voltage 2"
+  cell_voltage_sensor_3:
+    name: "Cell Voltage 3"
+  cell_voltage_sensor_4:
+    name: "Cell Voltage 4"
+  cell_voltage_sensor_5:
+    name: "Cell Voltage 5"
+  cell_voltage_sensor_6:
+    name: "Cell Voltage 6"
+  cell_voltage_sensor_7:
+    name: "Cell Voltage 7"
+  cell_voltage_sensor_8:
+    name: "Cell Voltage 8"
+  cell_voltage_sensor_9:
+    name: "Cell Voltage 9"
+  cell_voltage_sensor_10:
+    name: "Cell Voltage 10"
+  cell_voltage_sensor_11:
+    name: "Cell Voltage 11"
+  cell_voltage_sensor_12:
+    name: "Cell Voltage 12"
+  cell_voltage_sensor_13:
+    name: "Cell Voltage 13"
+  cell_voltage_sensor_14:
+    name: "Cell Voltage 14"
+  cell_voltage_sensor_15:
+    name: "Cell Voltage 15"
+  #cell_voltage_sensor_16:
+  #  name: "Cell Voltage 16"
+  #cell_voltage_sensor_17:
+  #  name: "Cell Voltage 17"
+
+  # Konfigurace teplotních senzorů
+  temperature_sensor_1:
+    name: "Temperature 1"
+  temperature_sensor_2:
+    name: "Temperature 2"
+  temperature_sensor_3:
+    name: "Temperature 3"
+  temperature_sensor_4:
+    name: "Temperature 4"
+  temperature_sensor_5:
+    name: "Temperature 5"
+  temperature_sensor_6:
+    name: "Temperature 6"
