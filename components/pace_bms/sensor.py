@@ -12,15 +12,15 @@ from esphome.const import (
     DEVICE_CLASS_VOLTAGE,
     UNIT_VOLT
 )
-from . import cg, cg
+from . import CONF_PACE_BMS_ID, PaceBMS
 CODEOWNERS = ["dansck"]
 
 DEPENDENCIES = []
 
 
 CONFIG_SCHEMA = cv.Schema(
-    cv.Schema({
-        cv.GenerateID(): cv.use_id(PaceBMS),
+    {
+        cv.GenerateID(CONF_PACE_BMS_ID): cv.use_id(PaceBMS),
         cv.Optional('voltage_sensor'): sensor.sensor_schema(
             unit_of_measurement=UNIT_VOLT,
             icon=ICON_EMPTY,
@@ -72,11 +72,11 @@ CONFIG_SCHEMA = cv.Schema(
         cv.Optional('temperature_sensor_4'): sensor.sensor_schema(),
         cv.Optional('temperature_sensor_5'): sensor.sensor_schema(),
         cv.Optional('temperature_sensor_6'): sensor.sensor_schema(),
-    })#.extend(cv.COMPONENT_SCHEMA).extend(uart.UART_DEVICE_SCHEMA)
+    }#.extend(cv.COMPONENT_SCHEMA).extend(uart.UART_DEVICE_SCHEMA)
 )
 
-def to_code(config):
-    #var = await cg.get_variable(config[CONF_ID])
+async def to_code(config):
+    var = await cg.get_variable(config[CONF_PACE_BMS_ID])
     #cg.new_Pvariable(config[CONF_ID])
     #cg.add(var.set_timeout(5000))
 

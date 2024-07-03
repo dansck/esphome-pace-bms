@@ -1,6 +1,6 @@
 import esphome.codegen as cg
 import esphome.config_validation as cv
-from esphome.components import sensor, uart
+from esphome.components import uart
 from esphome.const import (
     CONF_ID,
 )
@@ -8,7 +8,7 @@ CODEOWNERS = ["dansck"]
 
 DEPENDENCIES = ['uart']
 
-#CONF_ID = 'PaceBMS'
+CONF_PACE_BMS_ID = "PaceBMS"
 
 AUTO_LOAD = ['sensor']
 MULTI_CONF = True
@@ -24,7 +24,8 @@ CONFIG_SCHEMA = cv.All(
     }).extend(cv.COMPONENT_SCHEMA).extend(uart.UART_DEVICE_SCHEMA)
 )
 
-def to_code(config):
+async def to_code(config):
     var = cg.new_Pvariable(config[CONF_ID])
     cg.add(var.set_timeout(5000))
+    await cg.register_component(var, config)
 
