@@ -10,7 +10,7 @@ from esphome.const import (
     UNIT_CELSIUS,
     UNIT_PERCENT,
     DEVICE_CLASS_VOLTAGE,
-    UNIT_VOLTS
+    UNIT_VOLT
 )
 CODEOWNERS = ["dansck"]
 
@@ -25,7 +25,7 @@ CONFIG_SCHEMA = cv.All(
     cv.Schema({
         cv.GenerateID(): cv.declare_id(PaceBMS),
         cv.Optional('voltage_sensor'): sensor.sensor_schema(
-            unit_of_measurement=UNIT_VOLTS,
+            unit_of_measurement=UNIT_VOLT,
             icon=ICON_EMPTY,
             accuracy_decimals=0,
             device_class=DEVICE_CLASS_VOLTAGE,
