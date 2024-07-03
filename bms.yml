@@ -1,0 +1,138 @@
+esphome:
+  name: pace_bms
+
+
+external_components:
+  - source: github://dansck/esphome-pace-bms@main
+    components: [bms-pace]
+
+uart:
+  id: uart_bus
+  tx_pin: GPIO1
+  rx_pin: GPIO3
+  baud_rate: 9600
+
+sensor:
+  - platform: custom
+    lambda: |-
+      auto pace_bms = new PaceBMS(id(uart_bus));
+      App.register_component(pace_bms);
+      std::vector<Sensor*> sensors = {
+        pace_bms->voltage_sensor,
+        pace_bms->current_sensor,
+        pace_bms->remaining_capacity_sensor,
+        pace_bms->nominal_capacity_sensor,
+        pace_bms->full_capacity_sensor,
+        pace_bms->cycles_sensor,
+        pace_bms->state_of_health_sensor,
+        pace_bms->state_of_charge_sensor,
+        pace_bms->cell_max_volt_diff_sensor,
+        pace_bms->charge_fet_sensor,
+        pace_bms->discharge_fet_sensor,
+        pace_bms->balancing1_sensor,
+        pace_bms->balancing2_sensor,
+        pace_bms->ac_in_sensor,
+        pace_bms->current_limit_sensor,
+        pace_bms->heart_sensor,
+        pace_bms->pack_indicate_sensor,
+        pace_bms->protection_discharge_current_sensor,
+        pace_bms->protection_charge_current_sensor,
+        pace_bms->protection_short_circuit_sensor,
+        pace_bms->reverse_sensor
+      };
+      for (auto sensor : pace_bms->cell_voltage_sensors) {
+        sensors.push_back(sensor);
+      }
+      for (auto sensor : pace_bms->temperature_sensors) {
+        sensors.push_back(sensor);
+      }
+      return sensors;
+    sensors:
+      - name: "BMS Voltage"
+        unit_of_measurement: "V"
+      - name: "BMS Current"
+        unit_of_measurement: "A"
+      - name: "Remaining Capacity"
+        unit_of_measurement: "mAh"
+      - name: "Nominal Capacity"
+        unit_of_measurement: "mAh"
+      - name: "Full Capacity"
+        unit_of_measurement: "mAh"
+      - name: "Cycle Count"
+        unit_of_measurement: "cycles"
+      - name: "State of Health"
+        unit_of_measurement: "%"
+      - name: "State of Charge"
+        unit_of_measurement: "%"
+      - name: "Cell Max Volt Diff"
+        unit_of_measurement: "mV"
+      - name: "Charge FET"
+        unit_of_measurement: ""
+      - name: "Discharge FET"
+        unit_of_measurement: ""
+      - name: "Balancing 1"
+        unit_of_measurement: ""
+      - name: "Balancing 2"
+        unit_of_measurement: ""
+      - name: "AC In"
+        unit_of_measurement: ""
+      - name: "Current Limit"
+        unit_of_measurement: ""
+      - name: "Heart"
+        unit_of_measurement: ""
+      - name: "Pack Indicate"
+        unit_of_measurement: ""
+      - name: "Protection Discharge Current"
+        unit_of_measurement: ""
+      - name: "Protection Charge Current"
+        unit_of_measurement: ""
+      - name: "Protection Short Circuit"
+        unit_of_measurement: ""
+      - name: "Reverse"
+        unit_of_measurement: ""
+      - name: "Cell Voltage 1"
+        unit_of_measurement: "V"
+      - name: "Cell Voltage 2"
+        unit_of_measurement: "V"
+      - name: "Cell Voltage 3"
+        unit_of_measurement: "V"
+      - name: "Cell Voltage 4"
+        unit_of_measurement: "V"
+      - name: "Cell Voltage 5"
+        unit_of_measurement: "V"
+      - name: "Cell Voltage 6"
+        unit_of_measurement: "V"
+      - name: "Cell Voltage 7"
+        unit_of_measurement: "V"
+      - name: "Cell Voltage 8"
+        unit_of_measurement: "V"
+      - name: "Cell Voltage 9"
+        unit_of_measurement: "V"
+      - name: "Cell Voltage 10"
+        unit_of_measurement: "V"
+      - name: "Cell Voltage 11"
+        unit_of_measurement: "V"
+      - name: "Cell Voltage 12"
+        unit_of_measurement: "V"
+      - name: "Cell Voltage 13"
+        unit_of_measurement: "V"
+      - name: "Cell Voltage 14"
+        unit_of_measurement: "V"
+      - name: "Cell Voltage 15"
+        unit_of_measurement: "V"
+      - name: "Cell Voltage 16"
+        unit_of_measurement: "V"
+      - name: "Cell Voltage 17"
+        unit_of_measurement: "V"
+      - name: "Temperature 1"
+        unit_of_measurement: "°C"
+      - name: "Temperature 2"
+        unit_of_measurement: "°C"
+      - name: "Temperature 3"
+        unit_of_measurement: "°C"
+      - name: "Temperature 4"
+        unit_of_measurement: "°C"
+      - name: "Temperature 5"
+        unit_of_measurement: "°C"
+      - name: "Temperature 6"
+        unit_of_measurement: "°C"
