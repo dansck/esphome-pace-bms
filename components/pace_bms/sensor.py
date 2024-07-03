@@ -18,12 +18,9 @@ CODEOWNERS = ["dansck"]
 DEPENDENCIES = []
 
 
-pace_bms_ns = cg.esphome_ns.namespace('pace_bms')
-PaceBMS = pace_bms_ns.class_('PaceBMS', cg.Component, uart.UARTDevice)
-
-CONFIG_SCHEMA = cv.All(
+CONFIG_SCHEMA = cv.Schema(
     cv.Schema({
-        cv.GenerateID(): cv.declare_id(PaceBMS),
+        cv.GenerateID(): cv.use_id(PaceBMS),
         cv.Optional('voltage_sensor'): sensor.sensor_schema(
             unit_of_measurement=UNIT_VOLT,
             icon=ICON_EMPTY,
