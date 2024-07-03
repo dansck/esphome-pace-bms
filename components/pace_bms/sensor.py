@@ -72,11 +72,11 @@ CONFIG_SCHEMA = cv.Schema(
         cv.Optional('temperature_sensor_4'): sensor.sensor_schema(),
         cv.Optional('temperature_sensor_5'): sensor.sensor_schema(),
         cv.Optional('temperature_sensor_6'): sensor.sensor_schema(),
-    }).extend(cv.COMPONENT_SCHEMA).extend(uart.UART_DEVICE_SCHEMA)
+    })#.extend(cv.COMPONENT_SCHEMA).extend(uart.UART_DEVICE_SCHEMA)
 )
 
 async def to_code(config):
-    var = await cg.get_variable(config[CONF_PACE_BMS_ID])
+    var = await cg.get_variable(config[CONF_ID])
     #cg.new_Pvariable(config[CONF_ID])
     cg.add(var.set_timeout(5000))
 
