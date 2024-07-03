@@ -76,8 +76,8 @@ CONFIG_SCHEMA = cv.Schema(
 )
 
 def to_code(config):
-    var = cg.get_variable(config[CONF_ID])
-    #cg.new_Pvariable(config[CONF_ID])
+    #var = await cg.get_variable(config[CONF_ID])
+    cg.new_Pvariable(config[CONF_ID])
     cg.add(var.set_timeout(5000))
 
     if 'voltage_sensor' in config:
