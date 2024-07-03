@@ -28,5 +28,3 @@ def to_code(config):
     var = cg.new_Pvariable(config[CONF_ID])
     cg.add(var.set_timeout(5000))
 
-
-    cg.add(var.init())

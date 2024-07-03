@@ -12,7 +12,7 @@ from esphome.const import (
     DEVICE_CLASS_VOLTAGE,
     UNIT_VOLT
 )
-from . import CONF_ID, PaceBMS
+from . import cg, cg
 CODEOWNERS = ["dansck"]
 
 DEPENDENCIES = []
@@ -77,8 +77,8 @@ CONFIG_SCHEMA = cv.Schema(
 
 def to_code(config):
     #var = await cg.get_variable(config[CONF_ID])
-    cg.new_Pvariable(config[CONF_ID])
-    cg.add(var.set_timeout(5000))
+    #cg.new_Pvariable(config[CONF_ID])
+    #cg.add(var.set_timeout(5000))
 
     if 'voltage_sensor' in config:
         sens = yield sensor.new_sensor(config['voltage_sensor'])
