@@ -8,7 +8,7 @@ CODEOWNERS = ["dansck"]
 
 DEPENDENCIES = ['uart']
 
-#CONF_PACE_BMS_ID = 'pace_bms_id'
+#CONF_ID = 'PaceBMS'
 
 AUTO_LOAD = ['sensor']
 MULTI_CONF = True
@@ -19,7 +19,7 @@ PaceBMS = pace_bms_ns.class_('PaceBMS', cg.Component, uart.UARTDevice)
 
 CONFIG_SCHEMA = cv.All(
     cv.Schema({
-        cv.GenerateID(): cv.declare_id(PaceBMS),
+        cv.GenerateID(CONF_ID): cv.declare_id(PaceBMS),
         
     }).extend(cv.COMPONENT_SCHEMA).extend(uart.UART_DEVICE_SCHEMA)
 )

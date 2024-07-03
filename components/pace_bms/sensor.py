@@ -12,7 +12,7 @@ from esphome.const import (
     DEVICE_CLASS_VOLTAGE,
     UNIT_VOLT
 )
-#from . import CONF_PACE_BMS_ID, pace_bms_id
+from . import CONF_ID, PaceBMS
 CODEOWNERS = ["dansck"]
 
 DEPENDENCIES = []
