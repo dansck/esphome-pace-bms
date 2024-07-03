@@ -75,8 +75,8 @@ CONFIG_SCHEMA = cv.Schema(
     })#.extend(cv.COMPONENT_SCHEMA).extend(uart.UART_DEVICE_SCHEMA)
 )
 
-async def to_code(config):
-    var = await cg.get_variable(config[CONF_ID])
+def to_code(config):
+    var = cg.get_variable(config[CONF_ID])
     #cg.new_Pvariable(config[CONF_ID])
     cg.add(var.set_timeout(5000))
 
