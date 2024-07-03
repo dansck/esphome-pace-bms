@@ -7,9 +7,12 @@ from esphome.const import (
 CODEOWNERS = ["dansck"]
 
 DEPENDENCIES = ['uart']
-AUTO_LOAD = ['sensor']
 
-CONF_PACE_BMS_ID = "pace_bms_id"
+#CONF_PACE_BMS_ID = 'pace_bms_id'
+
+AUTO_LOAD = ['sensor']
+MULTI_CONF = True
+
 
 pace_bms_ns = cg.esphome_ns.namespace('pace_bms')
 PaceBMS = pace_bms_ns.class_('PaceBMS', cg.Component, uart.UARTDevice)
