@@ -39,6 +39,9 @@ namespace esphome
       void set_protection_short_circuit_sensor(sensor::Sensor *sensor) { protection_short_circuit_sensor_ = sensor; }
       void set_reverse_sensor(sensor::Sensor *sensor) { reverse_sensor_ = sensor; }
 
+      void set_cell_voltage_sensors(const std::vector<sensor::Sensor *> &sensors) { cell_voltage_sensors_ = sensors; }
+      void set_temperature_sensors(const std::vector<sensor::Sensor *> &sensors) { temperature_sensors_ = sensors; }
+
     protected:
       sensor::Sensor *voltage_sensor_{nullptr};
       sensor::Sensor *current_sensor_{nullptr};
@@ -60,6 +63,8 @@ namespace esphome
       sensor::Sensor *protection_charge_current_sensor_{nullptr};
       sensor::Sensor *protection_short_circuit_sensor_{nullptr};
       sensor::Sensor *reverse_sensor_{nullptr};
+      std::vector<sensor::Sensor *> cell_voltage_sensors_;
+      std::vector<sensor::Sensor *> temperature_sensors_;
 
       void read_bms_data_();
       void decode_response_(const std::vector<uint8_t> &data);
