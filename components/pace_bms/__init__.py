@@ -28,6 +28,16 @@ CONF_PROTECTION_CHARGE_CURRENT = "protection_charge_current"
 CONF_PROTECTION_SHORT_CIRCUIT = "protection_short_circuit"
 CONF_REVERSE = "reverse"
 CONF_TEMPERATURE = "temperature"
+CONF_CELL_VOLTAGES = ["cell_{}_voltage".format(i) for i in range(1, 16)]
+CONF_TEMPERATURES = ["temperature_{}".format(i) for i in range(1, 7)]
+CONF_BALANCING_1 = "balancing_1"
+CONF_BALANCING_2 = "balancing_2"
+CONF_WARNINGS = "warnings"
+CONF_DESIGN_CAPACITY = "design_capacity"
+CONF_PACK_FULL_CAPACITY = "pack_full_capacity"
+CONF_PACK_REMAINING_CAPACITY = "pack_remaining_capacity"
+CONF_PACK_STATE_OF_HEALTH = "pack_state_of_health"
+CONF_PACK_STATE_OF_CHARGE = "pack_state_of_charge"
 
 AUTO_LOAD = ['sensor']
 MULTI_CONF = True
@@ -60,6 +70,16 @@ CONFIG_SCHEMA = cv.All(
         cv.Optional(CONF_PROTECTION_SHORT_CIRCUIT): SENSOR_SCHEMA,
         cv.Optional(CONF_REVERSE): SENSOR_SCHEMA,
         cv.Optional(CONF_TEMPERATURE): SENSOR_SCHEMA,
+        **{cv.Optional(voltage): SENSOR_SCHEMA for voltage in CONF_CELL_VOLTAGES},
+        **{cv.Optional(temp): SENSOR_SCHEMA for temp in CONF_TEMPERATURES},
+        cv.Optional(CONF_BALANCING_1): SENSOR_SCHEMA,
+        cv.Optional(CONF_BALANCING_2): SENSOR_SCHEMA,
+        cv.Optional(CONF_WARNINGS): SENSOR_SCHEMA,
+        cv.Optional(CONF_DESIGN_CAPACITY): SENSOR_SCHEMA,
+        cv.Optional(CONF_PACK_FULL_CAPACITY): SENSOR_SCHEMA,
+        cv.Optional(CONF_PACK_REMAINING_CAPACITY): SENSOR_SCHEMA,
+        cv.Optional(CONF_PACK_STATE_OF_HEALTH): SENSOR_SCHEMA,
+        cv.Optional(CONF_PACK_STATE_OF_CHARGE): SENSOR_SCHEMA,
     }).extend(cv.COMPONENT_SCHEMA).extend(uart.UART_DEVICE_SCHEMA)
 )
 
@@ -128,3 +148,35 @@ async def to_code(config):
     if CONF_TEMPERATURE in config:
         sens = await sensor.new_sensor(config[CONF_TEMPERATURE])
         cg.add(var.set_temperature_sensor(sens))
+    for voltage in CONF_CELL_VOLTAGES:
+        if voltage in config:
+            sens = await sensor.new_sensor(config[voltage])
+            cg.add(getattr(var, f'set_{voltage}_sensor')(sens))
+    for temp in CONF_TEMPERATURES:
+        if temp in config:
+            sens = await sensor.new_sensor(config[temp])
+            cg.add(getattr(var, f'set_{temp}_sensor')(sens))
+    if CONF_BALANCING_1 in config:
+        sens = await sensor.new_sensor(config[CONF_BALANCING_1])
+        cg.add(var.set_balancing_1_sensor(sens))
+    if CONF_BALANCING_2 in config:
+        sens = await sensor.new_sensor(config[CONF_BALANCING_2])
+        cg.add(var.set_balancing_2_sensor(sens))
+    if CONF_WARNINGS in config:
+        sens = await sensor.new_sensor(config[CONF_WARNINGS])
+        cg.add(var.set_warnings_sensor(sens))
+    if CONF_DESIGN_CAPACITY in config:
+        sens = await sensor.new_sensor(config[CONF_DESIGN_CAPACITY])
+        cg.add(var.set_design_capacity_sensor(sens))
+    if CONF_PACK_FULL_CAPACITY in config:
+        sens = await sensor.new_sensor(config[CONF_PACK_FULL_CAPACITY])
+        cg.add(var.set_pack_full_capacity_sensor(sens))
+    if CONF_PACK_REMAINING_CAPACITY in config:
+        sens = await sensor.new_sensor(config[CONF_PACK_REMAINING_CAPACITY])
+        cg.add(var.set_pack_remaining_capacity_sensor(sens))
+    if CONF_PACK_STATE_OF_HEALTH in config:
+        sens = await sensor.new_sensor(config[CONF_PACK_STATE_OF_HEALTH])
+        cg.add(var.set_pack_state_of_health_sensor(sens))
+    if CONF_PACK_STATE_OF_CHARGE in config:
+        sens = await sensor.new_sensor(config[CONF_PACK_STATE_OF_CHARGE])
+        cg.add(var.set_pack_state_of_charge_sensor(sens))
