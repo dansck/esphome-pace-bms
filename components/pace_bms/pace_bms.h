@@ -6,13 +6,10 @@
 #include <map>
 #include <vector>
 
-namespace esphome
-{
-  namespace pace_bms
-  {
+namespace esphome {
+  namespace pace_bms {
 
-    class PaceBMS : public PollingComponent, public uart::UARTDevice
-    {
+    class PaceBMS : public PollingComponent, public uart::UARTDevice {
     public:
       void setup() override;
       void update() override;

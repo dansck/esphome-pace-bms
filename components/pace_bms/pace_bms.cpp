@@ -124,8 +124,8 @@ namespace esphome
     std::vector<float> PaceBMS::decode_cell_voltage_(const std::vector<uint8_t> &data)
     {
       std::vector<float> cell_voltages;
-      for (int i = 0; i < 17; i++)
-      {
+      for (int i = 0; i < 15; i++)
+      {                                                                      // Adjusted to match 15 cells
         float voltage = ((data[4 + i * 2] << 8) | data[5 + i * 2]) / 1000.0; // Voltage in V
         cell_voltages.push_back(voltage);
       }
@@ -134,7 +134,7 @@ namespace esphome
 
     float PaceBMS::decode_cell_max_volt_diff_(const std::vector<uint8_t> &data)
     {
-      return ((data[4] << 8) | data[5]) / 1000.0; // Voltage difference in mV
+      return ((data[34] << 8) | data[35]) / 1000.0; // Voltage difference in mV
     }
 
     std::vector<float> PaceBMS::decode_temperature_(const std::vector<uint8_t> &data)
@@ -142,7 +142,7 @@ namespace esphome
       std::vector<float> temperatures;
       for (int i = 0; i < 6; i++)
       {
-        float temp = ((data[30 + i * 2] << 8) | data[31 + i * 2]) / 10.0; // Temperature in °C
+        float temp = ((data[36 + i * 2] << 8) | data[37 + i * 2]) / 10.0; // Temperature in °C
         temperatures.push_back(temp);
       }
       return temperatures;
@@ -151,30 +151,30 @@ namespace esphome
     std::map<std::string, float> PaceBMS::decode_mosfet_status_(const std::vector<uint8_t> &data)
     {
       std::map<std::string, float> result;
-      result["charge_fet"] = data[24] & 0x01;    // Charge FET status
-      result["discharge_fet"] = data[24] & 0x02; // Discharge FET status
+      result["charge_fet"] = data[48] & 0x01;    // Charge FET status
+      result["discharge_fet"] = data[48] & 0x02; // Discharge FET status
       return result;
     }
 
     std::map<std::string, float> PaceBMS::decode_status_(const std::vector<uint8_t> &data)
     {
       std::map<std::string, float> result;
-      result["ac_in"] = data[25];                        // AC In status
-      result["current_limit"] = data[26];                // Current limit
-      result["heart"] = data[27];                        // Heart status
-      result["pack_indicate"] = data[28];                // Pack Indicate status
-      result["protection_discharge_current"] = data[29]; // Protection discharge current
-      result["protection_charge_current"] = data[30];    // Protection charge current
-      result["protection_short_circuit"] = data[31];     // Short circuit protection
-      result["reverse"] = data[32];                      // Reverse polarity protection
-      result["balancing_1"] = data[33];                  // Balancing 1 status
-      result["balancing_2"] = data[34];                  // Balancing 2 status
-      result["warnings"] = data[35];                     // Warnings
-      result["design_capacity"] = data[36];              // Design capacity
-      result["pack_full_capacity"] = data[37];           // Pack full capacity
-      result["pack_remaining_capacity"] = data[38];      // Pack remaining capacity
-      result["pack_state_of_health"] = data[39];         // Pack state of health
-      result["pack_state_of_charge"] = data[40];         // Pack state of charge
+      result["ac_in"] = data[49];                        // AC In status
+      result["current_limit"] = data[50];                // Current limit
+      result["heart"] = data[51];                        // Heart status
+      result["pack_indicate"] = data[52];                // Pack Indicate status
+      result["protection_discharge_current"] = data[53]; // Protection discharge current
+      result["protection_charge_current"] = data[54];    // Protection charge current
+      result["protection_short_circuit"] = data[55];     // Short circuit protection
+      result["reverse"] = data[56];                      // Reverse polarity protection
+      result["balancing_1"] = data[57];                  // Balancing 1 status
+      result["balancing_2"] = data[58];                  // Balancing 2 status
+      result["warnings"] = data[59];                     // Warnings
+      result["design_capacity"] = data[60];              // Design capacity
+      result["pack_full_capacity"] = data[61];           // Pack full capacity
+      result["pack_remaining_capacity"] = data[62];      // Pack remaining capacity
+      result["pack_state_of_health"] = data[63];         // Pack state of health
+      result["pack_state_of_charge"] = data[64];         // Pack state of charge
       return result;
     }
 

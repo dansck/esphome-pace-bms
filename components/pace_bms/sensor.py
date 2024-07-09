@@ -27,6 +27,14 @@ CONF_REVERSE = "reverse"
 CONF_TEMPERATURE = "temperature"
 CONF_CELL_VOLTAGES = "cell_voltages"
 CONF_TEMPERATURES = "temperatures"
+CONF_BALANCING_1 = "balancing_1"
+CONF_BALANCING_2 = "balancing_2"
+CONF_WARNINGS = "warnings"
+CONF_DESIGN_CAPACITY = "design_capacity"
+CONF_PACK_FULL_CAPACITY = "pack_full_capacity"
+CONF_PACK_REMAINING_CAPACITY = "pack_remaining_capacity"
+CONF_PACK_STATE_OF_HEALTH = "pack_state_of_health"
+CONF_PACK_STATE_OF_CHARGE = "pack_state_of_charge"
 
 SENSOR_SCHEMA = sensor.sensor_schema()
 
@@ -58,6 +66,14 @@ CONFIG_SCHEMA = cv.Schema({
     cv.Optional(CONF_TEMPERATURES): cv.All(
         cv.ensure_list(SENSOR_SCHEMA), cv.Length(min=1)
     ),
+    cv.Optional(CONF_BALANCING_1): SENSOR_SCHEMA,
+    cv.Optional(CONF_BALANCING_2): SENSOR_SCHEMA,
+    cv.Optional(CONF_WARNINGS): SENSOR_SCHEMA,
+    cv.Optional(CONF_DESIGN_CAPACITY): SENSOR_SCHEMA,
+    cv.Optional(CONF_PACK_FULL_CAPACITY): SENSOR_SCHEMA,
+    cv.Optional(CONF_PACK_REMAINING_CAPACITY): SENSOR_SCHEMA,
+    cv.Optional(CONF_PACK_STATE_OF_HEALTH): SENSOR_SCHEMA,
+    cv.Optional(CONF_PACK_STATE_OF_CHARGE): SENSOR_SCHEMA,
 })
 
 async def to_code(config):
@@ -134,3 +150,27 @@ async def to_code(config):
             s = await sensor.new_sensor(config[CONF_TEMPERATURES][i])
             sens.append(s)
         cg.add(var.set_temperature_sensors(sens))
+    if CONF_BALANCING_1 in config:
+        sens = await sensor.new_sensor(config[CONF_BALANCING_1])
+        cg.add(var.set_balancing_1_sensor(sens))
+    if CONF_BALANCING_2 in config:
+        sens = await sensor.new_sensor(config[CONF_BALANCING_2])
+        cg.add(var.set_balancing_2_sensor(sens))
+    if CONF_WARNINGS in config:
+        sens = await sensor.new_sensor(config[CONF_WARNINGS])
+        cg.add(var.set_warnings_sensor(sens))
+    if CONF_DESIGN_CAPACITY in config:
+        sens = await sensor.new_sensor(config[CONF_DESIGN_CAPACITY])
+        cg.add(var.set_design_capacity_sensor(sens))
+    if CONF_PACK_FULL_CAPACITY in config:
+        sens = await sensor.new_sensor(config[CONF_PACK_FULL_CAPACITY])
+        cg.add(var.set_pack_full_capacity_sensor(sens))
+    if CONF_PACK_REMAINING_CAPACITY in config:
+        sens = await sensor.new_sensor(config[CONF_PACK_REMAINING_CAPACITY])
+        cg.add(var.set_pack_remaining_capacity_sensor(sens))
+    if CONF_PACK_STATE_OF_HEALTH in config:
+        sens = await sensor.new_sensor(config[CONF_PACK_STATE_OF_HEALTH])
+        cg.add(var.set_pack_state_of_health_sensor(sens))
+    if CONF_PACK_STATE_OF_CHARGE in config:
+        sens = await sensor.new_sensor(config[CONF_PACK_STATE_OF_CHARGE])
+        cg.add(var.set_pack_state_of_charge_sensor(sens))
