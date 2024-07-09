@@ -21,11 +21,11 @@ namespace esphome
       if (now - this->last_read_time >= 5000)
       {
         this->last_read_time = now;
-        this->read_bms_data();
+        this->read_bms_data_();
       }
     }
 
-    void PaceBMS::read_bms_data()
+    void PaceBMS::read_bms_data_()
     {
       // Create and send the request to read data
       std::vector<uint8_t> request = {0x10, 0x02, 0xF0, 0x0D}; // Request may differ depending on BMS
@@ -38,7 +38,7 @@ namespace esphome
       if (len > 0)
       {
         // Process the response
-        this->decode_response(response);
+        this->decode_response_(response);
       }
       else
       {
@@ -46,7 +46,7 @@ namespace esphome
       }
     }
 
-    void PaceBMS::decode_response(const std::vector<uint8_t> &data)
+    void PaceBMS::decode_response_(const std::vector<uint8_t> &data)
     {
       if (data.size() < 5)
       {
@@ -55,52 +55,52 @@ namespace esphome
       }
 
       // Decode basic information
-      auto basic_info = this->decode_basic_info(data);
-      this->publish_state(this->voltage_sensor_, basic_info["voltage"]);
-      this->publish_state(this->current_sensor_, basic_info["current"]);
-      this->publish_state(this->remaining_capacity_sensor_, basic_info["remaining_capacity"]);
-      this->publish_state(this->nominal_capacity_sensor_, basic_info["nominal_capacity"]);
-      this->publish_state(this->full_capacity_sensor_, basic_info["full_capacity"]);
-      this->publish_state(this->cycles_sensor_, basic_info["cycles"]);
-      this->publish_state(this->state_of_health_sensor_, basic_info["state_of_health"]);
-      this->publish_state(this->state_of_charge_sensor_, basic_info["state_of_charge"]);
+      auto basic_info = this->decode_basic_info_(data);
+      this->publish_state_(this->voltage_sensor_, basic_info["voltage"]);
+      this->publish_state_(this->current_sensor_, basic_info["current"]);
+      this->publish_state_(this->remaining_capacity_sensor_, basic_info["remaining_capacity"]);
+      this->publish_state_(this->nominal_capacity_sensor_, basic_info["nominal_capacity"]);
+      this->publish_state_(this->full_capacity_sensor_, basic_info["full_capacity"]);
+      this->publish_state_(this->cycles_sensor_, basic_info["cycles"]);
+      this->publish_state_(this->state_of_health_sensor_, basic_info["state_of_health"]);
+      this->publish_state_(this->state_of_charge_sensor_, basic_info["state_of_charge"]);
 
       // Decode cell voltages
-      auto cell_voltages = this->decode_cell_voltage(data);
+      auto cell_voltages = this->decode_cell_voltage_(data);
       for (size_t i = 0; i < cell_voltages.size(); i++)
       {
-        this->publish_state(this->cell_voltage_sensors_[i], cell_voltages[i]);
+        this->publish_state_(this->cell_voltage_sensors_[i], cell_voltages[i]);
       }
 
       // Decode max cell voltage difference
-      float max_volt_diff = this->decode_cell_max_volt_diff(data);
-      this->publish_state(this->cell_max_volt_diff_sensor_, max_volt_diff);
+      float max_volt_diff = this->decode_cell_max_volt_diff_(data);
+      this->publish_state_(this->cell_max_volt_diff_sensor_, max_volt_diff);
 
       // Decode temperatures
-      auto temperatures = this->decode_temperature(data);
+      auto temperatures = this->decode_temperature_(data);
       for (size_t i = 0; i < temperatures.size(); i++)
       {
-        this->publish_state(this->temperature_sensors_[i], temperatures[i]);
+        this->publish_state_(this->temperature_sensors_[i], temperatures[i]);
       }
 
       // Decode MOSFET status
-      auto mosfet_status = this->decode_mosfet_status(data);
-      this->publish_state(this->charge_fet_sensor_, mosfet_status["charge_fet"]);
-      this->publish_state(this->discharge_fet_sensor_, mosfet_status["discharge_fet"]);
+      auto mosfet_status = this->decode_mosfet_status_(data);
+      this->publish_state_(this->charge_fet_sensor_, mosfet_status["charge_fet"]);
+      this->publish_state_(this->discharge_fet_sensor_, mosfet_status["discharge_fet"]);
 
       // Decode protection and functional status
-      auto status = this->decode_status(data);
-      this->publish_state(this->ac_in_sensor_, status["ac_in"]);
-      this->publish_state(this->current_limit_sensor_, status["current_limit"]);
-      this->publish_state(this->heart_sensor_, status["heart"]);
-      this->publish_state(this->pack_indicate_sensor_, status["pack_indicate"]);
-      this->publish_state(this->protection_discharge_current_sensor_, status["protection_discharge_current"]);
-      this->publish_state(this->protection_charge_current_sensor_, status["protection_charge_current"]);
-      this->publish_state(this->protection_short_circuit_sensor_, status["protection_short_circuit"]);
-      this->publish_state(this->reverse_sensor_, status["reverse"]);
+      auto status = this->decode_status_(data);
+      this->publish_state_(this->ac_in_sensor_, status["ac_in"]);
+      this->publish_state_(this->current_limit_sensor_, status["current_limit"]);
+      this->publish_state_(this->heart_sensor_, status["heart"]);
+      this->publish_state_(this->pack_indicate_sensor_, status["pack_indicate"]);
+      this->publish_state_(this->protection_discharge_current_sensor_, status["protection_discharge_current"]);
+      this->publish_state_(this->protection_charge_current_sensor_, status["protection_charge_current"]);
+      this->publish_state_(this->protection_short_circuit_sensor_, status["protection_short_circuit"]);
+      this->publish_state_(this->reverse_sensor_, status["reverse"]);
     }
 
-    std::map<std::string, float> PaceBMS::decode_basic_info(const std::vector<uint8_t> &data)
+    std::map<std::string, float> PaceBMS::decode_basic_info_(const std::vector<uint8_t> &data)
     {
       std::map<std::string, float> result;
       result["voltage"] = ((data[4] << 8) | data[5]) / 100.0;           // Voltage in V
@@ -114,7 +114,7 @@ namespace esphome
       return result;
     }
 
-    std::vector<float> PaceBMS::decode_cell_voltage(const std::vector<uint8_t> &data)
+    std::vector<float> PaceBMS::decode_cell_voltage_(const std::vector<uint8_t> &data)
     {
       std::vector<float> cell_voltages;
       for (int i = 0; i < 17; i++)
@@ -125,12 +125,12 @@ namespace esphome
       return cell_voltages;
     }
 
-    float PaceBMS::decode_cell_max_volt_diff(const std::vector<uint8_t> &data)
+    float PaceBMS::decode_cell_max_volt_diff_(const std::vector<uint8_t> &data)
     {
       return ((data[4] << 8) | data[5]) / 1000.0; // Voltage difference in mV
     }
 
-    std::vector<float> PaceBMS::decode_temperature(const std::vector<uint8_t> &data)
+    std::vector<float> PaceBMS::decode_temperature_(const std::vector<uint8_t> &data)
     {
       std::vector<float> temperatures;
       for (int i = 0; i < 6; i++)
@@ -141,7 +141,7 @@ namespace esphome
       return temperatures;
     }
 
-    std::map<std::string, float> PaceBMS::decode_mosfet_status(const std::vector<uint8_t> &data)
+    std::map<std::string, float> PaceBMS::decode_mosfet_status_(const std::vector<uint8_t> &data)
     {
       std::map<std::string, float> result;
       result["charge_fet"] = data[24] & 0x01;    // Charge FET status
@@ -149,7 +149,7 @@ namespace esphome
       return result;
     }
 
-    std::map<std::string, float> PaceBMS::decode_status(const std::vector<uint8_t> &data)
+    std::map<std::string, float> PaceBMS::decode_status_(const std::vector<uint8_t> &data)
     {
       std::map<std::string, float> result;
       result["ac_in"] = data[25];                        // AC In status
@@ -163,7 +163,7 @@ namespace esphome
       return result;
     }
 
-    void PaceBMS::publish_state(Sensor *sensor, float value)
+    void PaceBMS::publish_state_(sensor::Sensor *sensor, float value)
     {
       if (sensor != nullptr)
       {
