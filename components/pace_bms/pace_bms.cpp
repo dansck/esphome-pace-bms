@@ -1,5 +1,7 @@
 #include "pace_bms.h"
 #include "esphome/core/log.h"
+#include <map>
+#include <vector>
 
 namespace esphome
 {
@@ -11,18 +13,13 @@ namespace esphome
     void PaceBMS::setup()
     {
       // Setup timer for regular data reading
-      this->last_read_time = millis();
+      this->set_timeout(5000, [this]()
+                        { this->read_bms_data_(); });
     }
 
-    void PaceBMS::loop()
+    void PaceBMS::update()
     {
-      const uint32_t now = millis();
-      // Read data from BMS every 5 seconds
-      if (now - this->last_read_time >= 5000)
-      {
-        this->last_read_time = now;
-        this->read_bms_data_();
-      }
+      this->read_bms_data_();
     }
 
     void PaceBMS::read_bms_data_()
