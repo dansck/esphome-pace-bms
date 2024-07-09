@@ -1,130 +1,57 @@
 import esphome.codegen as cg
 import esphome.config_validation as cv
-from esphome.components import uart, sensor
-from esphome.const import CONF_ID
+from esphome.components import sensor, uart
+from esphome.const import (
+    CONF_ID,
+    UNIT_VOLT,
+    UNIT_AMPERE,
+    UNIT_MILLIAMPERE_HOUR,
+    UNIT_PERCENT,
+    UNIT_CELSIUS,
+    ICON_FLASH,
+    ICON_THERMOMETER,
+    ICON_CURRENT_AC,
+    ICON_BATTERY,
+    ICON_BATTERY_CHARGING,
+    ICON_POWER,
+    UNIT_MILLIVOLT,
+)
 
-CODEOWNERS = ["dansck"]
-
+CODEOWNERS = ["@dansck"]
 DEPENDENCIES = ['uart']
 
 CONF_PACE_BMS_ID = "pace_bms_id"
-CONF_VOLTAGE = "voltage"
-CONF_CURRENT = "current"
-CONF_REMAINING_CAPACITY = "remaining_capacity"
-CONF_NOMINAL_CAPACITY = "nominal_capacity"
-CONF_FULL_CAPACITY = "full_capacity"
-CONF_CYCLES = "cycles"
-CONF_STATE_OF_HEALTH = "state_of_health"
-CONF_STATE_OF_CHARGE = "state_of_charge"
-CONF_CELL_MAX_VOLT_DIFF = "cell_max_volt_diff"
-CONF_CHARGE_FET = "charge_fet"
-CONF_DISCHARGE_FET = "discharge_fet"
-CONF_AC_IN = "ac_in"
-CONF_CURRENT_LIMIT = "current_limit"
-CONF_HEART = "heart"
-CONF_PACK_INDICATE = "pack_indicate"
-CONF_PROTECTION_DISCHARGE_CURRENT = "protection_discharge_current"
-CONF_PROTECTION_CHARGE_CURRENT = "protection_charge_current"
-CONF_PROTECTION_SHORT_CIRCUIT = "protection_short_circuit"
-CONF_REVERSE = "reverse"
-CONF_TEMPERATURE = "temperature"
-
-AUTO_LOAD = ['sensor']
-MULTI_CONF = True
 
 pace_bms_ns = cg.esphome_ns.namespace('pace_bms')
 PaceBMS = pace_bms_ns.class_('PaceBMS', cg.Component, uart.UARTDevice)
 
-SENSOR_SCHEMA = sensor.sensor_schema()
+SENSORS = [
+    "voltage", "current", "remaining_capacity", "nominal_capacity",
+    "full_capacity", "cycles", "state_of_health", "state_of_charge",
+    "cell_max_volt_diff", "charge_fet", "discharge_fet", "ac_in",
+    "current_limit", "heart", "pack_indicate", "protection_discharge_current",
+    "protection_charge_current", "protection_short_circuit", "reverse",
+    "temperature", "cell_1_voltage", "cell_2_voltage", "cell_3_voltage",
+    "cell_4_voltage", "cell_5_voltage", "cell_6_voltage", "cell_7_voltage",
+    "cell_8_voltage", "cell_9_voltage", "cell_10_voltage", "cell_11_voltage",
+    "cell_12_voltage", "cell_13_voltage", "cell_14_voltage", "cell_15_voltage",
+    "temperature_1", "temperature_2", "temperature_3", "temperature_4",
+    "temperature_5", "temperature_6", "balancing_1", "balancing_2", "warnings",
+    "design_capacity", "pack_full_capacity", "pack_remaining_capacity",
+    "pack_state_of_health", "pack_state_of_charge"
+]
 
-CONFIG_SCHEMA = cv.All(
-    cv.Schema({
-        cv.GenerateID(CONF_ID): cv.declare_id(PaceBMS),
-        cv.Optional(CONF_VOLTAGE): SENSOR_SCHEMA,
-        cv.Optional(CONF_CURRENT): SENSOR_SCHEMA,
-        cv.Optional(CONF_REMAINING_CAPACITY): SENSOR_SCHEMA,
-        cv.Optional(CONF_NOMINAL_CAPACITY): SENSOR_SCHEMA,
-        cv.Optional(CONF_FULL_CAPACITY): SENSOR_SCHEMA,
-        cv.Optional(CONF_CYCLES): SENSOR_SCHEMA,
-        cv.Optional(CONF_STATE_OF_HEALTH): SENSOR_SCHEMA,
-        cv.Optional(CONF_STATE_OF_CHARGE): SENSOR_SCHEMA,
-        cv.Optional(CONF_CELL_MAX_VOLT_DIFF): SENSOR_SCHEMA,
-        cv.Optional(CONF_CHARGE_FET): SENSOR_SCHEMA,
-        cv.Optional(CONF_DISCHARGE_FET): SENSOR_SCHEMA,
-        cv.Optional(CONF_AC_IN): SENSOR_SCHEMA,
-        cv.Optional(CONF_CURRENT_LIMIT): SENSOR_SCHEMA,
-        cv.Optional(CONF_HEART): SENSOR_SCHEMA,
-        cv.Optional(CONF_PACK_INDICATE): SENSOR_SCHEMA,
-        cv.Optional(CONF_PROTECTION_DISCHARGE_CURRENT): SENSOR_SCHEMA,
-        cv.Optional(CONF_PROTECTION_CHARGE_CURRENT): SENSOR_SCHEMA,
-        cv.Optional(CONF_PROTECTION_SHORT_CIRCUIT): SENSOR_SCHEMA,
-        cv.Optional(CONF_REVERSE): SENSOR_SCHEMA,
-        cv.Optional(CONF_TEMPERATURE): SENSOR_SCHEMA,
-    }).extend(cv.COMPONENT_SCHEMA).extend(uart.UART_DEVICE_SCHEMA)
-)
+CONFIG_SCHEMA = cv.Schema({
+    cv.GenerateID(): cv.declare_id(PaceBMS),
+    **{cv.Optional(sensor): sensor.sensor_schema() for sensor in SENSORS}
+}).extend(cv.COMPONENT_SCHEMA).extend(uart.UART_DEVICE_SCHEMA)
 
 async def to_code(config):
     var = cg.new_Pvariable(config[CONF_ID])
     await cg.register_component(var, config)
     await uart.register_uart_device(var, config)
 
-    if CONF_VOLTAGE in config:
-        sens = await sensor.new_sensor(config[CONF_VOLTAGE])
-        cg.add(var.set_voltage_sensor(sens))
-    if CONF_CURRENT in config:
-        sens = await sensor.new_sensor(config[CONF_CURRENT])
-        cg.add(var.set_current_sensor(sens))
-    if CONF_REMAINING_CAPACITY in config:
-        sens = await sensor.new_sensor(config[CONF_REMAINING_CAPACITY])
-        cg.add(var.set_remaining_capacity_sensor(sens))
-    if CONF_NOMINAL_CAPACITY in config:
-        sens = await sensor.new_sensor(config[CONF_NOMINAL_CAPACITY])
-        cg.add(var.set_nominal_capacity_sensor(sens))
-    if CONF_FULL_CAPACITY in config:
-        sens = await sensor.new_sensor(config[CONF_FULL_CAPACITY])
-        cg.add(var.set_full_capacity_sensor(sens))
-    if CONF_CYCLES in config:
-        sens = await sensor.new_sensor(config[CONF_CYCLES])
-        cg.add(var.set_cycles_sensor(sens))
-    if CONF_STATE_OF_HEALTH in config:
-        sens = await sensor.new_sensor(config[CONF_STATE_OF_HEALTH])
-        cg.add(var.set_state_of_health_sensor(sens))
-    if CONF_STATE_OF_CHARGE in config:
-        sens = await sensor.new_sensor(config[CONF_STATE_OF_CHARGE])
-        cg.add(var.set_state_of_charge_sensor(sens))
-    if CONF_CELL_MAX_VOLT_DIFF in config:
-        sens = await sensor.new_sensor(config[CONF_CELL_MAX_VOLT_DIFF])
-        cg.add(var.set_cell_max_volt_diff_sensor(sens))
-    if CONF_CHARGE_FET in config:
-        sens = await sensor.new_sensor(config[CONF_CHARGE_FET])
-        cg.add(var.set_charge_fet_sensor(sens))
-    if CONF_DISCHARGE_FET in config:
-        sens = await sensor.new_sensor(config[CONF_DISCHARGE_FET])
-        cg.add(var.set_discharge_fet_sensor(sens))
-    if CONF_AC_IN in config:
-        sens = await sensor.new_sensor(config[CONF_AC_IN])
-        cg.add(var.set_ac_in_sensor(sens))
-    if CONF_CURRENT_LIMIT in config:
-        sens = await sensor.new_sensor(config[CONF_CURRENT_LIMIT])
-        cg.add(var.set_current_limit_sensor(sens))
-    if CONF_HEART in config:
-        sens = await sensor.new_sensor(config[CONF_HEART])
-        cg.add(var.set_heart_sensor(sens))
-    if CONF_PACK_INDICATE in config:
-        sens = await sensor.new_sensor(config[CONF_PACK_INDICATE])
-        cg.add(var.set_pack_indicate_sensor(sens))
-    if CONF_PROTECTION_DISCHARGE_CURRENT in config:
-        sens = await sensor.new_sensor(config[CONF_PROTECTION_DISCHARGE_CURRENT])
-        cg.add(var.set_protection_discharge_current_sensor(sens))
-    if CONF_PROTECTION_CHARGE_CURRENT in config:
-        sens = await sensor.new_sensor(config[CONF_PROTECTION_CHARGE_CURRENT])
-        cg.add(var.set_protection_charge_current_sensor(sens))
-    if CONF_PROTECTION_SHORT_CIRCUIT in config:
-        sens = await sensor.new_sensor(config[CONF_PROTECTION_SHORT_CIRCUIT])
-        cg.add(var.set_protection_short_circuit_sensor(sens))
-    if CONF_REVERSE in config:
-        sens = await sensor.new_sensor(config[CONF_REVERSE])
-        cg.add(var.set_reverse_sensor(sens))
-    if CONF_TEMPERATURE in config:
-        sens = await sensor.new_sensor(config[CONF_TEMPERATURE])
-        cg.add(var.set_temperature_sensor(sens))
+    for sensor_name in SENSORS:
+        if sensor_name in config:
+            sens = await sensor.new_sensor(config[sensor_name])
+            cg.add(getattr(var, f'set_{sensor_name}_sensor')(sens))
