@@ -28,8 +28,6 @@ CONF_PROTECTION_CHARGE_CURRENT = "protection_charge_current"
 CONF_PROTECTION_SHORT_CIRCUIT = "protection_short_circuit"
 CONF_REVERSE = "reverse"
 CONF_TEMPERATURE = "temperature"
-CONF_CELL_VOLTAGES = ["cell_{}_voltage".format(i) for i in range(1, 16)]
-CONF_TEMPERATURES = ["temperature_{}".format(i) for i in range(1, 7)]
 CONF_BALANCING_1 = "balancing_1"
 CONF_BALANCING_2 = "balancing_2"
 CONF_WARNINGS = "warnings"
@@ -38,6 +36,10 @@ CONF_PACK_FULL_CAPACITY = "pack_full_capacity"
 CONF_PACK_REMAINING_CAPACITY = "pack_remaining_capacity"
 CONF_PACK_STATE_OF_HEALTH = "pack_state_of_health"
 CONF_PACK_STATE_OF_CHARGE = "pack_state_of_charge"
+
+# Generate cell voltage and temperature configuration keys
+CONF_CELL_VOLTAGES = ["cell_{}_voltage".format(i) for i in range(1, 16)]
+CONF_TEMPERATURES = ["temperature_{}".format(i) for i in range(1, 7)]
 
 AUTO_LOAD = ['sensor']
 MULTI_CONF = True
