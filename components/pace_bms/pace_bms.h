@@ -42,6 +42,15 @@ namespace esphome
       void set_cell_voltage_sensors(const std::vector<sensor::Sensor *> &sensors) { cell_voltage_sensors_ = sensors; }
       void set_temperature_sensors(const std::vector<sensor::Sensor *> &sensors) { temperature_sensors_ = sensors; }
 
+      void set_balancing_1_sensor(sensor::Sensor *sensor) { balancing_1_sensor_ = sensor; }
+      void set_balancing_2_sensor(sensor::Sensor *sensor) { balancing_2_sensor_ = sensor; }
+      void set_warnings_sensor(sensor::Sensor *sensor) { warnings_sensor_ = sensor; }
+      void set_design_capacity_sensor(sensor::Sensor *sensor) { design_capacity_sensor_ = sensor; }
+      void set_pack_full_capacity_sensor(sensor::Sensor *sensor) { pack_full_capacity_sensor_ = sensor; }
+      void set_pack_remaining_capacity_sensor(sensor::Sensor *sensor) { pack_remaining_capacity_sensor_ = sensor; }
+      void set_pack_state_of_health_sensor(sensor::Sensor *sensor) { pack_state_of_health_sensor_ = sensor; }
+      void set_pack_state_of_charge_sensor(sensor::Sensor *sensor) { pack_state_of_charge_sensor_ = sensor; }
+
     protected:
       sensor::Sensor *voltage_sensor_{nullptr};
       sensor::Sensor *current_sensor_{nullptr};
@@ -65,6 +74,14 @@ namespace esphome
       sensor::Sensor *reverse_sensor_{nullptr};
       std::vector<sensor::Sensor *> cell_voltage_sensors_;
       std::vector<sensor::Sensor *> temperature_sensors_;
+      sensor::Sensor *balancing_1_sensor_{nullptr};
+      sensor::Sensor *balancing_2_sensor_{nullptr};
+      sensor::Sensor *warnings_sensor_{nullptr};
+      sensor::Sensor *design_capacity_sensor_{nullptr};
+      sensor::Sensor *pack_full_capacity_sensor_{nullptr};
+      sensor::Sensor *pack_remaining_capacity_sensor_{nullptr};
+      sensor::Sensor *pack_state_of_health_sensor_{nullptr};
+      sensor::Sensor *pack_state_of_charge_sensor_{nullptr};
 
       void read_bms_data_();
       void decode_response_(const std::vector<uint8_t> &data);

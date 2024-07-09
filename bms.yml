@@ -34,18 +34,23 @@ external_components:
     refresh: "10s"
 
 uart:
-  id: uart_bus
-  tx_pin: GPIO1
-  rx_pin: GPIO3
-  baud_rate: 9600  # Nastavení odpovídající BAUD_RATE z Python skriptu
+  - id: uart_bus
+    tx_pin: GPIO1
+    rx_pin: GPIO3
+    baud_rate: 9600 # Nastavení odpovídající BAUD_RATE z Python skriptu
+  - id: uart_bus2
+    tx_pin: GPIO17
+    rx_pin: GPIO16
+    baud_rate: 9600 # Nastavení odpovídající BAUD_RATE z Python skriptu
 
 pace_bms:
   id: ufo_bms
-  
+  uart_id: uart_bus2
+
 sensor:
   - platform: pace_bms
     voltage_sensor:
-      name: "Pack Voltage" 
+      name: "Pack Voltage"
   - platform: pace_bms
     current_sensor:
       name: "Pack Current"

@@ -95,6 +95,16 @@ namespace esphome
       this->publish_state_(this->protection_charge_current_sensor_, status["protection_charge_current"]);
       this->publish_state_(this->protection_short_circuit_sensor_, status["protection_short_circuit"]);
       this->publish_state_(this->reverse_sensor_, status["reverse"]);
+
+      // Decode additional sensors
+      this->publish_state_(this->balancing_1_sensor_, status["balancing_1"]);
+      this->publish_state_(this->balancing_2_sensor_, status["balancing_2"]);
+      this->publish_state_(this->warnings_sensor_, status["warnings"]);
+      this->publish_state_(this->design_capacity_sensor_, status["design_capacity"]);
+      this->publish_state_(this->pack_full_capacity_sensor_, status["pack_full_capacity"]);
+      this->publish_state_(this->pack_remaining_capacity_sensor_, status["pack_remaining_capacity"]);
+      this->publish_state_(this->pack_state_of_health_sensor_, status["pack_state_of_health"]);
+      this->publish_state_(this->pack_state_of_charge_sensor_, status["pack_state_of_charge"]);
     }
 
     std::map<std::string, float> PaceBMS::decode_basic_info_(const std::vector<uint8_t> &data)
@@ -157,6 +167,14 @@ namespace esphome
       result["protection_charge_current"] = data[30];    // Protection charge current
       result["protection_short_circuit"] = data[31];     // Short circuit protection
       result["reverse"] = data[32];                      // Reverse polarity protection
+      result["balancing_1"] = data[33];                  // Balancing 1 status
+      result["balancing_2"] = data[34];                  // Balancing 2 status
+      result["warnings"] = data[35];                     // Warnings
+      result["design_capacity"] = data[36];              // Design capacity
+      result["pack_full_capacity"] = data[37];           // Pack full capacity
+      result["pack_remaining_capacity"] = data[38];      // Pack remaining capacity
+      result["pack_state_of_health"] = data[39];         // Pack state of health
+      result["pack_state_of_charge"] = data[40];         // Pack state of charge
       return result;
     }
 
