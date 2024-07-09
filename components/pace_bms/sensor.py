@@ -25,35 +25,8 @@ CONF_PROTECTION_CHARGE_CURRENT = "protection_charge_current"
 CONF_PROTECTION_SHORT_CIRCUIT = "protection_short_circuit"
 CONF_REVERSE = "reverse"
 CONF_TEMPERATURE = "temperature"
-CONF_CELL_1_VOLTAGE = "cell_1_voltage"
-CONF_CELL_2_VOLTAGE = "cell_2_voltage"
-CONF_CELL_3_VOLTAGE = "cell_3_voltage"
-CONF_CELL_4_VOLTAGE = "cell_4_voltage"
-CONF_CELL_5_VOLTAGE = "cell_5_voltage"
-CONF_CELL_6_VOLTAGE = "cell_6_voltage"
-CONF_CELL_7_VOLTAGE = "cell_7_voltage"
-CONF_CELL_8_VOLTAGE = "cell_8_voltage"
-CONF_CELL_9_VOLTAGE = "cell_9_voltage"
-CONF_CELL_10_VOLTAGE = "cell_10_voltage"
-CONF_CELL_11_VOLTAGE = "cell_11_voltage"
-CONF_CELL_12_VOLTAGE = "cell_12_voltage"
-CONF_CELL_13_VOLTAGE = "cell_13_voltage"
-CONF_CELL_14_VOLTAGE = "cell_14_voltage"
-CONF_CELL_15_VOLTAGE = "cell_15_voltage"
-CONF_TEMPERATURE_1 = "temperature_1"
-CONF_TEMPERATURE_2 = "temperature_2"
-CONF_TEMPERATURE_3 = "temperature_3"
-CONF_TEMPERATURE_4 = "temperature_4"
-CONF_TEMPERATURE_5 = "temperature_5"
-CONF_TEMPERATURE_6 = "temperature_6"
-CONF_BALANCING_1 = "balancing_1"
-CONF_BALANCING_2 = "balancing_2"
-CONF_WARNINGS = "warnings"
-CONF_DESIGN_CAPACITY = "design_capacity"
-CONF_PACK_FULL_CAPACITY = "pack_full_capacity"
-CONF_PACK_REMAINING_CAPACITY = "pack_remaining_capacity"
-CONF_PACK_STATE_OF_HEALTH = "pack_state_of_health"
-CONF_PACK_STATE_OF_CHARGE = "pack_state_of_charge"
+CONF_CELL_VOLTAGES = "cell_voltages"
+CONF_TEMPERATURES = "temperatures"
 
 SENSOR_SCHEMA = sensor.sensor_schema()
 
@@ -79,35 +52,12 @@ CONFIG_SCHEMA = cv.Schema({
     cv.Optional(CONF_PROTECTION_SHORT_CIRCUIT): SENSOR_SCHEMA,
     cv.Optional(CONF_REVERSE): SENSOR_SCHEMA,
     cv.Optional(CONF_TEMPERATURE): SENSOR_SCHEMA,
-    cv.Optional(CONF_CELL_1_VOLTAGE): SENSOR_SCHEMA,
-    cv.Optional(CONF_CELL_2_VOLTAGE): SENSOR_SCHEMA,
-    cv.Optional(CONF_CELL_3_VOLTAGE): SENSOR_SCHEMA,
-    cv.Optional(CONF_CELL_4_VOLTAGE): SENSOR_SCHEMA,
-    cv.Optional(CONF_CELL_5_VOLTAGE): SENSOR_SCHEMA,
-    cv.Optional(CONF_CELL_6_VOLTAGE): SENSOR_SCHEMA,
-    cv.Optional(CONF_CELL_7_VOLTAGE): SENSOR_SCHEMA,
-    cv.Optional(CONF_CELL_8_VOLTAGE): SENSOR_SCHEMA,
-    cv.Optional(CONF_CELL_9_VOLTAGE): SENSOR_SCHEMA,
-    cv.Optional(CONF_CELL_10_VOLTAGE): SENSOR_SCHEMA,
-    cv.Optional(CONF_CELL_11_VOLTAGE): SENSOR_SCHEMA,
-    cv.Optional(CONF_CELL_12_VOLTAGE): SENSOR_SCHEMA,
-    cv.Optional(CONF_CELL_13_VOLTAGE): SENSOR_SCHEMA,
-    cv.Optional(CONF_CELL_14_VOLTAGE): SENSOR_SCHEMA,
-    cv.Optional(CONF_CELL_15_VOLTAGE): SENSOR_SCHEMA,
-    cv.Optional(CONF_TEMPERATURE_1): SENSOR_SCHEMA,
-    cv.Optional(CONF_TEMPERATURE_2): SENSOR_SCHEMA,
-    cv.Optional(CONF_TEMPERATURE_3): SENSOR_SCHEMA,
-    cv.Optional(CONF_TEMPERATURE_4): SENSOR_SCHEMA,
-    cv.Optional(CONF_TEMPERATURE_5): SENSOR_SCHEMA,
-    cv.Optional(CONF_TEMPERATURE_6): SENSOR_SCHEMA,
-    cv.Optional(CONF_BALANCING_1): SENSOR_SCHEMA,
-    cv.Optional(CONF_BALANCING_2): SENSOR_SCHEMA,
-    cv.Optional(CONF_WARNINGS): SENSOR_SCHEMA,
-    cv.Optional(CONF_DESIGN_CAPACITY): SENSOR_SCHEMA,
-    cv.Optional(CONF_PACK_FULL_CAPACITY): SENSOR_SCHEMA,
-    cv.Optional(CONF_PACK_REMAINING_CAPACITY): SENSOR_SCHEMA,
-    cv.Optional(CONF_PACK_STATE_OF_HEALTH): SENSOR_SCHEMA,
-    cv.Optional(CONF_PACK_STATE_OF_CHARGE): SENSOR_SCHEMA,
+    cv.Optional(CONF_CELL_VOLTAGES): cv.All(
+        cv.ensure_list(SENSOR_SCHEMA), cv.Length(min=1)
+    ),
+    cv.Optional(CONF_TEMPERATURES): cv.All(
+        cv.ensure_list(SENSOR_SCHEMA), cv.Length(min=1)
+    ),
 })
 
 async def to_code(config):
@@ -172,90 +122,15 @@ async def to_code(config):
     if CONF_TEMPERATURE in config:
         sens = await sensor.new_sensor(config[CONF_TEMPERATURE])
         cg.add(var.set_temperature_sensor(sens))
-    if CONF_CELL_1_VOLTAGE in config:
-        sens = await sensor.new_sensor(config[CONF_CELL_1_VOLTAGE])
-        cg.add(var.set_cell_1_voltage_sensor(sens))
-    if CONF_CELL_2_VOLTAGE in config:
-        sens = await sensor.new_sensor(config[CONF_CELL_2_VOLTAGE])
-        cg.add(var.set_cell_2_voltage_sensor(sens))
-    if CONF_CELL_3_VOLTAGE in config:
-        sens = await sensor.new_sensor(config[CONF_CELL_3_VOLTAGE])
-        cg.add(var.set_cell_3_voltage_sensor(sens))
-    if CONF_CELL_4_VOLTAGE in config:
-        sens = await sensor.new_sensor(config[CONF_CELL_4_VOLTAGE])
-        cg.add(var.set_cell_4_voltage_sensor(sens))
-    if CONF_CELL_5_VOLTAGE in config:
-        sens = await sensor.new_sensor(config[CONF_CELL_5_VOLTAGE])
-        cg.add(var.set_cell_5_voltage_sensor(sens))
-    if CONF_CELL_6_VOLTAGE in config:
-        sens = await sensor.new_sensor(config[CONF_CELL_6_VOLTAGE])
-        cg.add(var.set_cell_6_voltage_sensor(sens))
-    if CONF_CELL_7_VOLTAGE in config:
-        sens = await sensor.new_sensor(config[CONF_CELL_7_VOLTAGE])
-        cg.add(var.set_cell_7_voltage_sensor(sens))
-    if CONF_CELL_8_VOLTAGE in config:
-        sens = await sensor.new_sensor(config[CONF_CELL_8_VOLTAGE])
-        cg.add(var.set_cell_8_voltage_sensor(sens))
-    if CONF_CELL_9_VOLTAGE in config:
-        sens = await sensor.new_sensor(config[CONF_CELL_9_VOLTAGE])
-        cg.add(var.set_cell_9_voltage_sensor(sens))
-    if CONF_CELL_10_VOLTAGE in config:
-        sens = await sensor.new_sensor(config[CONF_CELL_10_VOLTAGE])
-        cg.add(var.set_cell_10_voltage_sensor(sens))
-    if CONF_CELL_11_VOLTAGE in config:
-        sens = await sensor.new_sensor(config[CONF_CELL_11_VOLTAGE])
-        cg.add(var.set_cell_11_voltage_sensor(sens))
-    if CONF_CELL_12_VOLTAGE in config:
-        sens = await sensor.new_sensor(config[CONF_CELL_12_VOLTAGE])
-        cg.add(var.set_cell_12_voltage_sensor(sens))
-    if CONF_CELL_13_VOLTAGE in config:
-        sens = await sensor.new_sensor(config[CONF_CELL_13_VOLTAGE])
-        cg.add(var.set_cell_13_voltage_sensor(sens))
-    if CONF_CELL_14_VOLTAGE in config:
-        sens = await sensor.new_sensor(config[CONF_CELL_14_VOLTAGE])
-        cg.add(var.set_cell_14_voltage_sensor(sens))
-    if CONF_CELL_15_VOLTAGE in config:
-        sens = await sensor.new_sensor(config[CONF_CELL_15_VOLTAGE])
-        cg.add(var.set_cell_15_voltage_sensor(sens))
-    if CONF_TEMPERATURE_1 in config:
-        sens = await sensor.new_sensor(config[CONF_TEMPERATURE_1])
-        cg.add(var.set_temperature_1_sensor(sens))
-    if CONF_TEMPERATURE_2 in config:
-        sens = await sensor.new_sensor(config[CONF_TEMPERATURE_2])
-        cg.add(var.set_temperature_2_sensor(sens))
-    if CONF_TEMPERATURE_3 in config:
-        sens = await sensor.new_sensor(config[CONF_TEMPERATURE_3])
-        cg.add(var.set_temperature_3_sensor(sens))
-    if CONF_TEMPERATURE_4 in config:
-        sens = await sensor.new_sensor(config[CONF_TEMPERATURE_4])
-        cg.add(var.set_temperature_4_sensor(sens))
-    if CONF_TEMPERATURE_5 in config:
-        sens = await sensor.new_sensor(config[CONF_TEMPERATURE_5])
-        cg.add(var.set_temperature_5_sensor(sens))
-    if CONF_TEMPERATURE_6 in config:
-        sens = await sensor.new_sensor(config[CONF_TEMPERATURE_6])
-        cg.add(var.set_temperature_6_sensor(sens))
-    if CONF_BALANCING_1 in config:
-        sens = await sensor.new_sensor(config[CONF_BALANCING_1])
-        cg.add(var.set_balancing_1_sensor(sens))
-    if CONF_BALANCING_2 in config:
-        sens = await sensor.new_sensor(config[CONF_BALANCING_2])
-        cg.add(var.set_balancing_2_sensor(sens))
-    if CONF_WARNINGS in config:
-        sens = await sensor.new_sensor(config[CONF_WARNINGS])
-        cg.add(var.set_warnings_sensor(sens))
-    if CONF_DESIGN_CAPACITY in config:
-        sens = await sensor.new_sensor(config[CONF_DESIGN_CAPACITY])
-        cg.add(var.set_design_capacity_sensor(sens))
-    if CONF_PACK_FULL_CAPACITY in config:
-        sens = await sensor.new_sensor(config[CONF_PACK_FULL_CAPACITY])
-        cg.add(var.set_pack_full_capacity_sensor(sens))
-    if CONF_PACK_REMAINING_CAPACITY in config:
-        sens = await sensor.new_sensor(config[CONF_PACK_REMAINING_CAPACITY])
-        cg.add(var.set_pack_remaining_capacity_sensor(sens))
-    if CONF_PACK_STATE_OF_HEALTH in config:
-        sens = await sensor.new_sensor(config[CONF_PACK_STATE_OF_HEALTH])
-        cg.add(var.set_pack_state_of_health_sensor(sens))
-    if CONF_PACK_STATE_OF_CHARGE in config:
-        sens = await sensor.new_sensor(config[CONF_PACK_STATE_OF_CHARGE])
-        cg.add(var.set_pack_state_of_charge_sensor(sens))
+    if CONF_CELL_VOLTAGES in config:
+        sens = []
+        for i in range(len(config[CONF_CELL_VOLTAGES])):
+            s = await sensor.new_sensor(config[CONF_CELL_VOLTAGES][i])
+            sens.append(s)
+        cg.add(var.set_cell_voltage_sensors(sens))
+    if CONF_TEMPERATURES in config:
+        sens = []
+        for i in range(len(config[CONF_TEMPERATURES])):
+            s = await sensor.new_sensor(config[CONF_TEMPERATURES][i])
+            sens.append(s)
+        cg.add(var.set_temperature_sensors(sens))
