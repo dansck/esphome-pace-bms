@@ -3,18 +3,6 @@ import esphome.config_validation as cv
 from esphome.components import sensor, uart
 from esphome.const import (
     CONF_ID,
-    UNIT_VOLT,
-    UNIT_AMPERE,
-    UNIT_MILLIAMPERE,
-    UNIT_PERCENT,
-    UNIT_CELSIUS,
-    ICON_FLASH,
-    ICON_THERMOMETER,
-    ICON_CURRENT_AC,
-    ICON_BATTERY,
-    ICON_BATTERY_CHARGING,
-    ICON_POWER,
-    UNIT_MILLIVOLT,
 )
 
 CODEOWNERS = ["@dansck"]
