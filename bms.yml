@@ -1,13 +1,11 @@
 esphome:
-  name: bms1
-  friendly_name: bms1
+  name: bms
+  friendly_name: bms
 
 esp32:
   board: esp32dev
   framework:
-    #type: arduino
-    type: esp-idf
-    version: recommended
+    type: arduino
 
 # Enable logging
 logger:
@@ -15,15 +13,16 @@ logger:
 # Enable Home Assistant API
 api:
   encryption:
-    key: "aaaaaa"
+    key: "0Sn0wgXKEwOjMs+RkyTEYg9w9D/+4kHGzUqM1EsdT+0="
 
 ota:
   - platform: esphome
-    password: "aaaaaa"
+    password: "f6cee402ca670c47e4d937fadc0661c8"
 
 wifi:
   ssid: !secret wifi_ssid
   password: !secret wifi_password
+
 
 external_components:
   - source:
@@ -46,139 +45,104 @@ uart:
 pace_bms:
   id: ufo_bms
   uart_id: uart_bus2
-
+  
 sensor:
   - platform: pace_bms
-    voltage_sensor:
-      name: "Pack Voltage"
-  - platform: pace_bms
-    current_sensor:
-      name: "Pack Current"
-  - platform: pace_bms
-    remaining_capacity_sensor:
+    voltage:
+      name: "BMS Voltage"
+    current:
+      name: "BMS Current"
+    remaining_capacity:
       name: "Remaining Capacity"
-  - platform: pace_bms
-    nominal_capacity_sensor:
+    nominal_capacity:
       name: "Nominal Capacity"
-  - platform: pace_bms
-    full_capacity_sensor:
+    full_capacity:
       name: "Full Capacity"
-  - platform: pace_bms
-    cycles_sensor:
-      name: "Charge Cycles"
-  - platform: pace_bms
-    state_of_health_sensor:
+    cycles:
+      name: "Cycles"
+    state_of_health:
       name: "State of Health"
-  - platform: pace_bms
-    state_of_charge_sensor:
+    state_of_charge:
       name: "State of Charge"
-  - platform: pace_bms
-    cell_max_volt_diff_sensor:
-      name: "Cell Max Voltage Difference"
-  - platform: pace_bms
-    charge_fet_sensor:
-      name: "Charge FET Status"
-  - platform: pace_bms
-    discharge_fet_sensor:
-      name: "Discharge FET Status"
-  - platform: pace_bms
-    balancing1_sensor:
-      name: "Balancing Status 1"
-  - platform: pace_bms
-    balancing2_sensor:
-      name: "Balancing Status 2"
-  - platform: pace_bms
-    ac_in_sensor:
-      name: "AC In Status"
-  - platform: pace_bms
-    current_limit_sensor:
-      name: "Current Limit Status"
-  - platform: pace_bms
-    heart_sensor:
-      name: "Heart Status"
-  - platform: pace_bms
-    pack_indicate_sensor:
-      name: "Pack Indicate Status"
-  - platform: pace_bms
-    protection_discharge_current_sensor:
+    cell_max_volt_diff:
+      name: "Max Voltage Difference"
+    charge_fet:
+      name: "Charge FET"
+    discharge_fet:
+      name: "Discharge FET"
+    ac_in:
+      name: "AC In"
+    current_limit:
+      name: "Current Limit"
+    heart:
+      name: "Heart"
+    pack_indicate:
+      name: "Pack Indicate"
+    protection_discharge_current:
       name: "Protection Discharge Current"
-  - platform: pace_bms
-    protection_charge_current_sensor:
+    protection_charge_current:
       name: "Protection Charge Current"
-  - platform: pace_bms
-    protection_short_circuit_sensor:
+    protection_short_circuit:
       name: "Protection Short Circuit"
-  - platform: pace_bms
-    reverse_sensor:
-      name: "Reverse Protection"
-
-  # Konfigurace senzorů pro napětí jednotlivých článků
-  - platform: pace_bms
-    cell_voltage_sensor_1:
-      name: "Cell Voltage 1"
-  - platform: pace_bms
-    cell_voltage_sensor_2:
-      name: "Cell Voltage 2"
-  - platform: pace_bms
-    cell_voltage_sensor_3:
-      name: "Cell Voltage 3"
-  - platform: pace_bms
-    cell_voltage_sensor_4:
-      name: "Cell Voltage 4"
-  - platform: pace_bms
-    cell_voltage_sensor_5:
-      name: "Cell Voltage 5"
-  - platform: pace_bms
-    cell_voltage_sensor_6:
-      name: "Cell Voltage 6"
-  - platform: pace_bms
-    cell_voltage_sensor_7:
-      name: "Cell Voltage 7"
-  - platform: pace_bms
-    cell_voltage_sensor_8:
-      name: "Cell Voltage 8"
-  - platform: pace_bms
-    cell_voltage_sensor_9:
-      name: "Cell Voltage 9"
-  - platform: pace_bms
-    cell_voltage_sensor_10:
-      name: "Cell Voltage 10"
-  - platform: pace_bms
-    cell_voltage_sensor_11:
-      name: "Cell Voltage 11"
-  - platform: pace_bms
-    cell_voltage_sensor_12:
-      name: "Cell Voltage 12"
-  - platform: pace_bms
-    cell_voltage_sensor_13:
-      name: "Cell Voltage 13"
-  - platform: pace_bms
-    cell_voltage_sensor_14:
-      name: "Cell Voltage 14"
-  - platform: pace_bms
-    cell_voltage_sensor_15:
-      name: "Cell Voltage 15"
-  #cell_voltage_sensor_16:
-  #  name: "Cell Voltage 16"
-  #cell_voltage_sensor_17:
-  #  name: "Cell Voltage 17"
-
-  # Konfigurace teplotních senzorů
-  - platform: pace_bms
-    temperature_sensor_1:
-      name: "Temperature 1"
-  - platform: pace_bms
-    temperature_sensor_2:
-      name: "Temperature 2"
-  - platform: pace_bms
-    temperature_sensor_3:
-      name: "Temperature 3"
-  - platform: pace_bms
-    temperature_sensor_4:
-      name: "Temperature 4"
-  - platform: pace_bms
-    temperature_sensor_5:
-      name: "Temperature 5"
-  - platform: pace_bms
-    temperature_sensor_6:
-      name: "Temperature 6"
+    reverse:
+      name: "Reverse"
+    temperature:
+      name: "BMS Temperature"
+    cell_1_voltage:
+      name: "Pack 1 Cell 1 Voltage"
+    cell_2_voltage:
+      name: "Pack 1 Cell 2 Voltage"
+    cell_3_voltage:
+      name: "Pack 1 Cell 3 Voltage"
+    cell_4_voltage:
+      name: "Pack 1 Cell 4 Voltage"
+    cell_5_voltage:
+      name: "Pack 1 Cell 5 Voltage"
+    cell_6_voltage:
+      name: "Pack 1 Cell 6 Voltage"
+    cell_7_voltage:
+      name: "Pack 1 Cell 7 Voltage"
+    cell_8_voltage:
+      name: "Pack 1 Cell 8 Voltage"
+    cell_9_voltage:
+      name: "Pack 1 Cell 9 Voltage"
+    cell_10_voltage:
+      name: "Pack 1 Cell 10 Voltage"
+    cell_11_voltage:
+      name: "Pack 1 Cell 11 Voltage"
+    cell_12_voltage:
+      name: "Pack 1 Cell 12 Voltage"
+    cell_13_voltage:
+      name: "Pack 1 Cell 13 Voltage"
+    cell_14_voltage:
+      name: "Pack 1 Cell 14 Voltage"
+    cell_15_voltage:
+      name: "Pack 1 Cell 15 Voltage"
+    temperature_1:
+      name: "Pack 1 Temperature 1"
+    temperature_2:
+      name: "Pack 1 Temperature 2"
+    temperature_3:
+      name: "Pack 1 Temperature 3"
+    temperature_4:
+      name: "Pack 1 Temperature 4"
+    temperature_5:
+      name: "Pack 1 Temperature 5"
+    temperature_6:
+      name: "Pack 1 Temperature 6"
+    balancing_1:
+      name: "Pack 1 Balancing 1"
+    balancing_2:
+      name: "Pack 1 Balancing 2"
+    warnings:
+      name: "Pack 1 Warnings"
+    design_capacity:
+      name: "Pack Design Capacity"
+    pack_full_capacity:
+      name: "Pack Full Capacity"
+    pack_remaining_capacity:
+      name: "Pack Remaining Capacity"
+    pack_state_of_health:
+      name: "Pack State of Health"
+    pack_state_of_charge:
+      name: "Pack State of Charge"
