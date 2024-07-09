@@ -1,17 +1,15 @@
 import esphome.codegen as cg
 import esphome.config_validation as cv
 from esphome.components import uart, sensor
-from esphome.const import (
-    CONF_ID, CONF_VOLTAGE, CONF_CURRENT, CONF_TEMPERATURE,
-    UNIT_VOLTAGE, UNIT_AMPERE, UNIT_CELSIUS,
-    ICON_FLASH, ICON_CURRENT_AC, ICON_THERMOMETER
-)
+from esphome.const import CONF_ID
 
 CODEOWNERS = ["dansck"]
 
 DEPENDENCIES = ['uart']
 
 CONF_PACE_BMS_ID = "pace_bms_id"
+CONF_VOLTAGE = "voltage"
+CONF_CURRENT = "current"
 CONF_REMAINING_CAPACITY = "remaining_capacity"
 CONF_NOMINAL_CAPACITY = "nominal_capacity"
 CONF_FULL_CAPACITY = "full_capacity"
@@ -29,6 +27,7 @@ CONF_PROTECTION_DISCHARGE_CURRENT = "protection_discharge_current"
 CONF_PROTECTION_CHARGE_CURRENT = "protection_charge_current"
 CONF_PROTECTION_SHORT_CIRCUIT = "protection_short_circuit"
 CONF_REVERSE = "reverse"
+CONF_TEMPERATURE = "temperature"
 
 AUTO_LOAD = ['sensor']
 MULTI_CONF = True
@@ -36,75 +35,31 @@ MULTI_CONF = True
 pace_bms_ns = cg.esphome_ns.namespace('pace_bms')
 PaceBMS = pace_bms_ns.class_('PaceBMS', cg.Component, uart.UARTDevice)
 
-SENSOR_SCHEMA = sensor.sensor_schema(
-    accuracy_decimals=1,
-    unit_of_measurement=UNIT_VOLTAGE,
-    icon=ICON_FLASH
-)
+SENSOR_SCHEMA = sensor.sensor_schema()
 
 CONFIG_SCHEMA = cv.All(
     cv.Schema({
         cv.GenerateID(CONF_ID): cv.declare_id(PaceBMS),
-        cv.Optional(CONF_VOLTAGE): SENSOR_SCHEMA.extend({
-            cv.GenerateID(): cv.declare_id(sensor.Sensor)
-        }),
-        cv.Optional(CONF_CURRENT): SENSOR_SCHEMA.extend({
-            cv.GenerateID(): cv.declare_id(sensor.Sensor)
-        }),
-        cv.Optional(CONF_REMAINING_CAPACITY): SENSOR_SCHEMA.extend({
-            cv.GenerateID(): cv.declare_id(sensor.Sensor)
-        }),
-        cv.Optional(CONF_NOMINAL_CAPACITY): SENSOR_SCHEMA.extend({
-            cv.GenerateID(): cv.declare_id(sensor.Sensor)
-        }),
-        cv.Optional(CONF_FULL_CAPACITY): SENSOR_SCHEMA.extend({
-            cv.GenerateID(): cv.declare_id(sensor.Sensor)
-        }),
-        cv.Optional(CONF_CYCLES): SENSOR_SCHEMA.extend({
-            cv.GenerateID(): cv.declare_id(sensor.Sensor)
-        }),
-        cv.Optional(CONF_STATE_OF_HEALTH): SENSOR_SCHEMA.extend({
-            cv.GenerateID(): cv.declare_id(sensor.Sensor)
-        }),
-        cv.Optional(CONF_STATE_OF_CHARGE): SENSOR_SCHEMA.extend({
-            cv.GenerateID(): cv.declare_id(sensor.Sensor)
-        }),
-        cv.Optional(CONF_CELL_MAX_VOLT_DIFF): SENSOR_SCHEMA.extend({
-            cv.GenerateID(): cv.declare_id(sensor.Sensor)
-        }),
-        cv.Optional(CONF_CHARGE_FET): SENSOR_SCHEMA.extend({
-            cv.GenerateID(): cv.declare_id(sensor.Sensor)
-        }),
-        cv.Optional(CONF_DISCHARGE_FET): SENSOR_SCHEMA.extend({
-            cv.GenerateID(): cv.declare_id(sensor.Sensor)
-        }),
-        cv.Optional(CONF_AC_IN): SENSOR_SCHEMA.extend({
-            cv.GenerateID(): cv.declare_id(sensor.Sensor)
-        }),
-        cv.Optional(CONF_CURRENT_LIMIT): SENSOR_SCHEMA.extend({
-            cv.GenerateID(): cv.declare_id(sensor.Sensor)
-        }),
-        cv.Optional(CONF_HEART): SENSOR_SCHEMA.extend({
-            cv.GenerateID(): cv.declare_id(sensor.Sensor)
-        }),
-        cv.Optional(CONF_PACK_INDICATE): SENSOR_SCHEMA.extend({
-            cv.GenerateID(): cv.declare_id(sensor.Sensor)
-        }),
-        cv.Optional(CONF_PROTECTION_DISCHARGE_CURRENT): SENSOR_SCHEMA.extend({
-            cv.GenerateID(): cv.declare_id(sensor.Sensor)
-        }),
-        cv.Optional(CONF_PROTECTION_CHARGE_CURRENT): SENSOR_SCHEMA.extend({
-            cv.GenerateID(): cv.declare_id(sensor.Sensor)
-        }),
-        cv.Optional(CONF_PROTECTION_SHORT_CIRCUIT): SENSOR_SCHEMA.extend({
-            cv.GenerateID(): cv.declare_id(sensor.Sensor)
-        }),
-        cv.Optional(CONF_REVERSE): SENSOR_SCHEMA.extend({
-            cv.GenerateID(): cv.declare_id(sensor.Sensor)
-        }),
-        cv.Optional(CONF_TEMPERATURE): SENSOR_SCHEMA.extend({
-            cv.GenerateID(): cv.declare_id(sensor.Sensor)
-        }),
+        cv.Optional(CONF_VOLTAGE): SENSOR_SCHEMA,
+        cv.Optional(CONF_CURRENT): SENSOR_SCHEMA,
+        cv.Optional(CONF_REMAINING_CAPACITY): SENSOR_SCHEMA,
+        cv.Optional(CONF_NOMINAL_CAPACITY): SENSOR_SCHEMA,
+        cv.Optional(CONF_FULL_CAPACITY): SENSOR_SCHEMA,
+        cv.Optional(CONF_CYCLES): SENSOR_SCHEMA,
+        cv.Optional(CONF_STATE_OF_HEALTH): SENSOR_SCHEMA,
+        cv.Optional(CONF_STATE_OF_CHARGE): SENSOR_SCHEMA,
+        cv.Optional(CONF_CELL_MAX_VOLT_DIFF): SENSOR_SCHEMA,
+        cv.Optional(CONF_CHARGE_FET): SENSOR_SCHEMA,
+        cv.Optional(CONF_DISCHARGE_FET): SENSOR_SCHEMA,
+        cv.Optional(CONF_AC_IN): SENSOR_SCHEMA,
+        cv.Optional(CONF_CURRENT_LIMIT): SENSOR_SCHEMA,
+        cv.Optional(CONF_HEART): SENSOR_SCHEMA,
+        cv.Optional(CONF_PACK_INDICATE): SENSOR_SCHEMA,
+        cv.Optional(CONF_PROTECTION_DISCHARGE_CURRENT): SENSOR_SCHEMA,
+        cv.Optional(CONF_PROTECTION_CHARGE_CURRENT): SENSOR_SCHEMA,
+        cv.Optional(CONF_PROTECTION_SHORT_CIRCUIT): SENSOR_SCHEMA,
+        cv.Optional(CONF_REVERSE): SENSOR_SCHEMA,
+        cv.Optional(CONF_TEMPERATURE): SENSOR_SCHEMA,
     }).extend(cv.COMPONENT_SCHEMA).extend(uart.UART_DEVICE_SCHEMA)
 )
 
