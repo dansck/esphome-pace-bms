@@ -5,7 +5,7 @@ from esphome.const import (
     CONF_ID,
     UNIT_VOLT,
     UNIT_AMPERE,
-    UNIT_MILLIAMPERE_HOUR,
+    UNIT_MILLIAMPERE,
     UNIT_PERCENT,
     UNIT_CELSIUS,
     ICON_FLASH,
