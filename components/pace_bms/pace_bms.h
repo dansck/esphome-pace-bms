@@ -1,65 +1,57 @@
 #pragma once
 
-#include "esphome/core/component.h"
-#include "esphome/components/sensor/sensor.h"
+#include "esphome.h"
+#include <vector>
 
 namespace esphome {
 namespace pace_bms {
 
 class PaceBMS : public Component, public UARTDevice {
  public:
-  void setup() override;
+  PaceBMS(UARTComponent *parent) : UARTDevice(parent) {}
+
   void update() override;
 
-  sensor::Sensor *voltage_sensor{nullptr};
-  sensor::Sensor *current_sensor{nullptr};
-  sensor::Sensor *remaining_capacity_sensor{nullptr};
-  sensor::Sensor *nominal_capacity_sensor{nullptr};
-  sensor::Sensor *full_capacity_sensor{nullptr};
-  sensor::Sensor *cycles_sensor{nullptr};
-  sensor::Sensor *state_of_health_sensor{nullptr};
-  sensor::Sensor *state_of_charge_sensor{nullptr};
-  sensor::Sensor *cell_max_volt_diff_sensor{nullptr};
-  sensor::Sensor *charge_fet_sensor{nullptr};
-  sensor::Sensor *discharge_fet_sensor{nullptr};
-  sensor::Sensor *ac_in_sensor{nullptr};
-  sensor::Sensor *current_limit_sensor{nullptr};
-  sensor::Sensor *heart_sensor{nullptr};
-  sensor::Sensor *pack_indicate_sensor{nullptr};
-  sensor::Sensor *protection_discharge_current_sensor{nullptr};
-  sensor::Sensor *protection_charge_current_sensor{nullptr};
-  sensor::Sensor *protection_short_circuit_sensor{nullptr};
-  sensor::Sensor *reverse_sensor{nullptr};
-  sensor::Sensor *temperature_sensor{nullptr};
-  std::array<sensor::Sensor *, 16> cell_voltages_sensor{};
-  std::array<sensor::Sensor *, 4> temperatures_sensor{};
-  sensor::Sensor *balancing_1_sensor{nullptr};
-  sensor::Sensor *balancing_2_sensor{nullptr};
-  sensor::Sensor *warnings_sensor{nullptr};
-  sensor::Sensor *design_capacity_sensor{nullptr};
-  sensor::Sensor *pack_full_capacity_sensor{nullptr};
-  sensor::Sensor *pack_remaining_capacity_sensor{nullptr};
-  sensor::Sensor *pack_state_of_health_sensor{nullptr};
-  sensor::Sensor *pack_state_of_charge_sensor{nullptr};
-  sensor::Sensor *pack_number_sensor{nullptr};
-  sensor::Sensor *pack_analog_data_sensor{nullptr};
-  sensor::Sensor *software_version_sensor{nullptr};
-  sensor::Sensor *serial_number_sensor{nullptr};
-  sensor::Sensor *pack_capacity_sensor{nullptr};
-  sensor::Sensor *warn_info_sensor{nullptr};
+  void set_voltage_sensor(sensor::Sensor *sensor) { voltage_sensor = sensor; }
+  void set_current_sensor(sensor::Sensor *sensor) { current_sensor = sensor; }
+  void set_remaining_capacity_sensor(sensor::Sensor *sensor) { remaining_capacity_sensor = sensor; }
+  void set_nominal_capacity_sensor(sensor::Sensor *sensor) { nominal_capacity_sensor = sensor; }
+  void set_full_capacity_sensor(sensor::Sensor *sensor) { full_capacity_sensor = sensor; }
+  void set_cycles_sensor(sensor::Sensor *sensor) { cycles_sensor = sensor; }
+  void set_state_of_health_sensor(sensor::Sensor *sensor) { state_of_health_sensor = sensor; }
+  void set_state_of_charge_sensor(sensor::Sensor *sensor) { state_of_charge_sensor = sensor; }
+  void set_cell_max_volt_diff_sensor(sensor::Sensor *sensor) { cell_max_volt_diff_sensor = sensor; }
+  void set_charge_fet_sensor(sensor::Sensor *sensor) { charge_fet_sensor = sensor; }
+  void set_discharge_fet_sensor(sensor::Sensor *sensor) { discharge_fet_sensor = sensor; }
+  void set_ac_in_sensor(sensor::Sensor *sensor) { ac_in_sensor = sensor; }
+  void set_current_limit_sensor(sensor::Sensor *sensor) { current_limit_sensor = sensor; }
+  void set_heart_sensor(sensor::Sensor *sensor) { heart_sensor = sensor; }
+  void set_pack_indicate_sensor(sensor::Sensor *sensor) { pack_indicate_sensor = sensor; }
+  void set_protection_discharge_current_sensor(sensor::Sensor *sensor) { protection_discharge_current_sensor = sensor; }
+  void set_protection_charge_current_sensor(sensor::Sensor *sensor) { protection_charge_current_sensor = sensor; }
+  void set_protection_short_circuit_sensor(sensor::Sensor *sensor) { protection_short_circuit_sensor = sensor; }
+  void set_reverse_sensor(sensor::Sensor *sensor) { reverse_sensor = sensor; }
+  void set_balancing_1_sensor(sensor::Sensor *sensor) { balancing_1_sensor = sensor; }
+  void set_balancing_2_sensor(sensor::Sensor *sensor) { balancing_2_sensor = sensor; }
+  void set_warnings_sensor(sensor::Sensor *sensor) { warnings_sensor = sensor; }
+  void set_design_capacity_sensor(sensor::Sensor *sensor) { design_capacity_sensor = sensor; }
+  void set_pack_full_capacity_sensor(sensor::Sensor *sensor) { pack_full_capacity_sensor = sensor; }
+  void set_pack_remaining_capacity_sensor(sensor::Sensor *sensor) { pack_remaining_capacity_sensor = sensor; }
+  void set_pack_state_of_health_sensor(sensor::Sensor *sensor) { pack_state_of_health_sensor = sensor; }
+  void set_pack_state_of_charge_sensor(sensor::Sensor *sensor) { pack_state_of_charge_sensor = sensor; }
+  void set_pack_number_sensor(sensor::Sensor *sensor) { pack_number_sensor = sensor; }
+  void set_pack_analog_data_sensor(sensor::Sensor *sensor) { pack_analog_data_sensor = sensor; }
+  void set_software_version_sensor(sensor::Sensor *sensor) { software_version_sensor = sensor; }
+  void set_serial_number_sensor(sensor::Sensor *sensor) { serial_number_sensor = sensor; }
+  void set_pack_capacity_sensor(sensor::Sensor *sensor) { pack_capacity_sensor = sensor; }
+  void set_warn_info_sensor(sensor::Sensor *sensor) { warn_info_sensor = sensor; }
 
- protected:
+  void add_cell_voltage_sensor(sensor::Sensor *sensor) { cell_voltages_sensors.push_back(sensor); }
+  void add_temperature_sensor(sensor::Sensor *sensor) { temperatures_sensors.push_back(sensor); }
+
+ private:
   void publish_sensor_state(uint16_t value, sensor::Sensor *sensor, const char *sensor_name, int index = -1);
-  uint16_t crc16(const uint8_t *data, size_t length);
-  uint8_t lchksum_calc(const std::string &lenid);
-  uint8_t chksum_calc(const std::vector<uint8_t> &data);
-  void send_command(const std::vector<uint8_t> &command);
-  std::vector<uint8_t> read_response();
-  uint16_t decode_response(const std::vector<uint8_t> &response);
-  std::vector<uint8_t> build_command(uint8_t cid1, uint8_t cid2, uint8_t idx = 0x00);
-  uint16_t execute_command(uint8_t cid1, uint8_t cid2, uint8_t idx = 0x00);
-
-  // Command methods
+  uint16_t execute_command(uint8_t cid1, uint8_t cid2, uint8_t idx = 0);
   uint16_t get_voltage();
   uint16_t get_current();
   uint16_t get_remaining_capacity();
@@ -95,6 +87,43 @@ class PaceBMS : public Component, public UARTDevice {
   uint16_t get_serial_number();
   uint16_t get_pack_capacity();
   uint16_t get_warn_info();
+
+  sensor::Sensor *voltage_sensor{nullptr};
+  sensor::Sensor *current_sensor{nullptr};
+  sensor::Sensor *remaining_capacity_sensor{nullptr};
+  sensor::Sensor *nominal_capacity_sensor{nullptr};
+  sensor::Sensor *full_capacity_sensor{nullptr};
+  sensor::Sensor *cycles_sensor{nullptr};
+  sensor::Sensor *state_of_health_sensor{nullptr};
+  sensor::Sensor *state_of_charge_sensor{nullptr};
+  sensor::Sensor *cell_max_volt_diff_sensor{nullptr};
+  sensor::Sensor *charge_fet_sensor{nullptr};
+  sensor::Sensor *discharge_fet_sensor{nullptr};
+  sensor::Sensor *ac_in_sensor{nullptr};
+  sensor::Sensor *current_limit_sensor{nullptr};
+  sensor::Sensor *heart_sensor{nullptr};
+  sensor::Sensor *pack_indicate_sensor{nullptr};
+  sensor::Sensor *protection_discharge_current_sensor{nullptr};
+  sensor::Sensor *protection_charge_current_sensor{nullptr};
+  sensor::Sensor *protection_short_circuit_sensor{nullptr};
+  sensor::Sensor *reverse_sensor{nullptr};
+  sensor::Sensor *balancing_1_sensor{nullptr};
+  sensor::Sensor *balancing_2_sensor{nullptr};
+  sensor::Sensor *warnings_sensor{nullptr};
+  sensor::Sensor *design_capacity_sensor{nullptr};
+  sensor::Sensor *pack_full_capacity_sensor{nullptr};
+  sensor::Sensor *pack_remaining_capacity_sensor{nullptr};
+  sensor::Sensor *pack_state_of_health_sensor{nullptr};
+  sensor::Sensor *pack_state_of_charge_sensor{nullptr};
+  sensor::Sensor *pack_number_sensor{nullptr};
+  sensor::Sensor *pack_analog_data_sensor{nullptr};
+  sensor::Sensor *software_version_sensor{nullptr};
+  sensor::Sensor *serial_number_sensor{nullptr};
+  sensor::Sensor *pack_capacity_sensor{nullptr};
+  sensor::Sensor *warn_info_sensor{nullptr};
+
+  std::vector<sensor::Sensor *> cell_voltages_sensors;
+  std::vector<sensor::Sensor *> temperatures_sensors;
 };
 
 }  // namespace pace_bms

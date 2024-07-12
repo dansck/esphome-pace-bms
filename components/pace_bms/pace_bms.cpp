@@ -6,13 +6,8 @@ namespace pace_bms {
 
 static const char *TAG = "pace_bms";
 
-void PaceBMS::setup() {
-  ESP_LOGCONFIG(TAG, "Setting up PaceBMS...");
-  // Initialization code here
-}
-
 void PaceBMS::update() {
-  ESP_LOGI(TAG, "Updating PaceBMS...");
+  ESP_LOGD(TAG, "Updating Pace BMS...");
 
   publish_sensor_state(get_voltage(), this->voltage_sensor, "Voltage");
   publish_sensor_state(get_current(), this->current_sensor, "Current");
@@ -22,7 +17,7 @@ void PaceBMS::update() {
   publish_sensor_state(get_cycles(), this->cycles_sensor, "Cycles");
   publish_sensor_state(get_state_of_health(), this->state_of_health_sensor, "State of Health");
   publish_sensor_state(get_state_of_charge(), this->state_of_charge_sensor, "State of Charge");
-  publish_sensor_state(get_cell_max_volt_diff(), this->cell_max_volt_diff_sensor, "Cell Max Volt Diff");
+  publish_sensor_state(get_cell_max_volt_diff(), this->cell_max_volt_diff_sensor, "Cell Max Voltage Difference");
   publish_sensor_state(get_charge_fet(), this->charge_fet_sensor, "Charge FET");
   publish_sensor_state(get_discharge_fet(), this->discharge_fet_sensor, "Discharge FET");
   publish_sensor_state(get_ac_in(), this->ac_in_sensor, "AC In");
@@ -33,17 +28,6 @@ void PaceBMS::update() {
   publish_sensor_state(get_protection_charge_current(), this->protection_charge_current_sensor, "Protection Charge Current");
   publish_sensor_state(get_protection_short_circuit(), this->protection_short_circuit_sensor, "Protection Short Circuit");
   publish_sensor_state(get_reverse(), this->reverse_sensor, "Reverse");
-
-  // Read cell voltages
-  for (int i = 0; i < 16; i++) {
-    publish_sensor_state(get_cell_voltage(i), this->cell_voltages_sensor[i], "Cell Voltage", i);
-  }
-
-  // Read temperatures
-  for (int i = 0; i < 4; i++) {
-    publish_sensor_state(get_temperature(i), this->temperatures_sensor[i], "Temperature", i);
-  }
-
   publish_sensor_state(get_balancing_1(), this->balancing_1_sensor, "Balancing 1");
   publish_sensor_state(get_balancing_2(), this->balancing_2_sensor, "Balancing 2");
   publish_sensor_state(get_warnings(), this->warnings_sensor, "Warnings");
@@ -58,240 +42,186 @@ void PaceBMS::update() {
   publish_sensor_state(get_serial_number(), this->serial_number_sensor, "Serial Number");
   publish_sensor_state(get_pack_capacity(), this->pack_capacity_sensor, "Pack Capacity");
   publish_sensor_state(get_warn_info(), this->warn_info_sensor, "Warn Info");
+
+  for (size_t i = 0; i < this->cell_voltages_sensors.size(); i++) {
+    publish_sensor_state(get_cell_voltage(i + 1), this->cell_voltages_sensors[i], "Cell Voltage", i + 1);
+  }
+
+  for (size_t i = 0; i < this->temperatures_sensors.size(); i++) {
+    publish_sensor_state(get_temperature(i + 1), this->temperatures_sensors[i], "Temperature", i + 1);
+  }
 }
 
 void PaceBMS::publish_sensor_state(uint16_t value, sensor::Sensor *sensor, const char *sensor_name, int index) {
-  if (value != 0) {
+  if (sensor != nullptr) {
+    ESP_LOGD(TAG, "Publishing %s%s: %d", sensor_name, (index >= 0) ? std::to_string(index).c_str() : "", value);
     sensor->publish_state(value);
-    if (index >= 0) {
-      ESP_LOGI(TAG, "%s [%d]: %d", sensor_name, index, value);
-    } else {
-      ESP_LOGI(TAG, "%s: %d", sensor_name, value);
-    }
-  } else {
-    if (index >= 0) {
-      ESP_LOGW(TAG, "Failed to get %s [%d]", sensor_name, index);
-    } else {
-      ESP_LOGW(TAG, "Failed to get %s", sensor_name);
-    }
   }
-}
-
-uint16_t PaceBMS::crc16(const uint8_t *data, size_t length) {
-  uint16_t crc = 0xFFFF;
-  while (length--) {
-    crc ^= *data++;
-    for (int i = 0; i < 8; i++) {
-      if (crc & 0x01) {
-        crc = (crc >> 1) ^ 0xA001;
-      } else {
-        crc >>= 1;
-      }
-    }
-  }
-  return crc;
-}
-
-uint8_t PaceBMS::lchksum_calc(const std::string &lenid) {
-  uint8_t sum = 0;
-  for (char c : lenid) {
-    sum += c;
-  }
-  return (sum % 256);
-}
-
-uint8_t PaceBMS::chksum_calc(const std::vector<uint8_t> &data) {
-  uint8_t sum = 0;
-  for (uint8_t byte : data) {
-    sum += byte;
-  }
-  return (sum % 256);
-}
-
-std::vector<uint8_t> PaceBMS::build_command(uint8_t cid1, uint8_t cid2, uint8_t idx) {
-  std::vector<uint8_t> command;
-  command.push_back(0x7E);  // Start byte
-  command.push_back(0x32);  // Version byte 1
-  command.push_back(0x35);  // Version byte 2
-  command.push_back(0x30);  // Address byte 1
-  command.push_back(0x31);  // Address byte 2
-  command.push_back(cid1);
-  command.push_back(cid2);
-  std::string lenid = "000";
-  command.push_back(lchksum_calc(lenid));
-  command.insert(command.end(), lenid.begin(), lenid.end());
-  command.push_back(chksum_calc(command));
-  command.push_back(0x0D);  // End byte
-  return command;
-}
-
-void PaceBMS::send_command(const std::vector<uint8_t> &command) {
-  for (uint8_t byte : command) {
-    this->write_byte(byte);
-  }
-}
-
-std::vector<uint8_t> PaceBMS::read_response() {
-  std::vector<uint8_t> response;
-  while (this->available()) {
-    response.push_back(this->read());
-  }
-  return response;
-}
-
-uint16_t PaceBMS::decode_response(const std::vector<uint8_t> &response) {
-  // Assume the response is correct and decode it.
-  // This function needs to be adjusted according to the actual response structure.
-  if (response.size() < 5) return 0;  // Example check for minimum length
-  return (response[3] << 8) | response[4];  // Example decoding
 }
 
 uint16_t PaceBMS::execute_command(uint8_t cid1, uint8_t cid2, uint8_t idx) {
-  std::vector<uint8_t> command = build_command(cid1, cid2, idx);
+  std::vector<unsigned char> command = {0x7e, 0x32, 0x35, 0x30, 0x31, cid1, cid2, 0x00, 0x30, 0x30, 0x30};
+
+  if (idx != 0) {
+    command[10] = 0x30 + idx;
+  }
+
+  uint16_t checksum = 0;
+  for (size_t i = 1; i < command.size(); i++) {
+    checksum += command[i];
+  }
+  command.push_back((checksum >> 8) & 0xFF);
+  command.push_back(checksum & 0xFF);
+  command.push_back(0x0d);
+
   send_command(command);
-  std::vector<uint8_t> response = read_response();
-  return decode_response(response);
+  auto response = read_response();
+
+  if (response.size() > 8) {
+    return (response[7] << 8) | response[8];
+  }
+
+  return 0;
 }
 
-// Command methods implementation
 uint16_t PaceBMS::get_voltage() {
-  return execute_command(0x46, 0xC1);
+  return execute_command(0x34, 0x56);
 }
 
 uint16_t PaceBMS::get_current() {
-  return execute_command(0x46, 0xC2);
+  return execute_command(0x34, 0x57);
 }
 
 uint16_t PaceBMS::get_remaining_capacity() {
-  return execute_command(0x46, 0xC3);
+  return execute_command(0x34, 0x58);
 }
 
 uint16_t PaceBMS::get_nominal_capacity() {
-  return execute_command(0x46, 0xC4);
+  return execute_command(0x34, 0x59);
 }
 
 uint16_t PaceBMS::get_full_capacity() {
-  return execute_command(0x46, 0xC5);
+  return execute_command(0x34, 0x5A);
 }
 
 uint16_t PaceBMS::get_cycles() {
-  return execute_command(0x46, 0xC6);
+  return execute_command(0x34, 0x5B);
 }
 
 uint16_t PaceBMS::get_state_of_health() {
-  return execute_command(0x46, 0xC7);
+  return execute_command(0x34, 0x5C);
 }
 
 uint16_t PaceBMS::get_state_of_charge() {
-  return execute_command(0x46, 0xC8);
+  return execute_command(0x34, 0x5D);
 }
 
 uint16_t PaceBMS::get_cell_max_volt_diff() {
-  return execute_command(0x46, 0xC9);
+  return execute_command(0x34, 0x5E);
 }
 
 uint16_t PaceBMS::get_charge_fet() {
-  return execute_command(0x46, 0xCA);
+  return execute_command(0x34, 0x5F);
 }
 
 uint16_t PaceBMS::get_discharge_fet() {
-  return execute_command(0x46, 0xCB);
+  return execute_command(0x34, 0x60);
 }
 
 uint16_t PaceBMS::get_ac_in() {
-  return execute_command(0x46, 0xCC);
+  return execute_command(0x34, 0x61);
 }
 
 uint16_t PaceBMS::get_current_limit() {
-  return execute_command(0x46, 0xCD);
+  return execute_command(0x34, 0x62);
 }
 
 uint16_t PaceBMS::get_heart() {
-  return execute_command(0x46, 0xCE);
+  return execute_command(0x34, 0x63);
 }
 
 uint16_t PaceBMS::get_pack_indicate() {
-  return execute_command(0x46, 0xCF);
+  return execute_command(0x34, 0x64);
 }
 
 uint16_t PaceBMS::get_protection_discharge_current() {
-  return execute_command(0x46, 0xD0);
+  return execute_command(0x34, 0x65);
 }
 
 uint16_t PaceBMS::get_protection_charge_current() {
-  return execute_command(0x46, 0xD1);
+  return execute_command(0x34, 0x66);
 }
 
 uint16_t PaceBMS::get_protection_short_circuit() {
-  return execute_command(0x46, 0xD2);
+  return execute_command(0x34, 0x67);
 }
 
 uint16_t PaceBMS::get_reverse() {
-  return execute_command(0x46, 0xD3);
+  return execute_command(0x34, 0x68);
 }
 
 uint16_t PaceBMS::get_temperature(uint8_t idx) {
-  return execute_command(0x46, 0xD4, idx);
+  return execute_command(0x34, 0x69, idx);
 }
 
 uint16_t PaceBMS::get_cell_voltage(uint8_t idx) {
-  return execute_command(0x46, 0xD5, idx);
+  return execute_command(0x34, 0x6A, idx);
 }
 
 uint16_t PaceBMS::get_balancing_1() {
-  return execute_command(0x46, 0xD6);
+  return execute_command(0x34, 0x6B);
 }
 
 uint16_t PaceBMS::get_balancing_2() {
-  return execute_command(0x46, 0xD7);
+  return execute_command(0x34, 0x6C);
 }
 
 uint16_t PaceBMS::get_warnings() {
-  return execute_command(0x46, 0xD8);
+  return execute_command(0x34, 0x6D);
 }
 
 uint16_t PaceBMS::get_design_capacity() {
-  return execute_command(0x46, 0xD9);
+  return execute_command(0x34, 0x6E);
 }
 
 uint16_t PaceBMS::get_pack_full_capacity() {
-  return execute_command(0x46, 0xDA);
+  return execute_command(0x34, 0x6F);
 }
 
 uint16_t PaceBMS::get_pack_remaining_capacity() {
-  return execute_command(0x46, 0xDB);
+  return execute_command(0x34, 0x70);
 }
 
 uint16_t PaceBMS::get_pack_state_of_health() {
-  return execute_command(0x46, 0xDC);
+  return execute_command(0x34, 0x71);
 }
 
 uint16_t PaceBMS::get_pack_state_of_charge() {
-  return execute_command(0x46, 0xDD);
+  return execute_command(0x34, 0x72);
 }
 
 uint16_t PaceBMS::get_pack_number() {
-  return execute_command(0x46, 0xDE);
+  return execute_command(0x34, 0x73);
 }
 
 uint16_t PaceBMS::get_pack_analog_data() {
-  return execute_command(0x46, 0xDF);
+  return execute_command(0x34, 0x74);
 }
 
 uint16_t PaceBMS::get_software_version() {
-  return execute_command(0x46, 0xE0);
+  return execute_command(0x34, 0x75);
 }
 
 uint16_t PaceBMS::get_serial_number() {
-  return execute_command(0x46, 0xE1);
+  return execute_command(0x34, 0x76);
 }
 
 uint16_t PaceBMS::get_pack_capacity() {
-  return execute_command(0x46, 0xE2);
+  return execute_command(0x34, 0x77);
 }
 
 uint16_t PaceBMS::get_warn_info() {
-  return execute_command(0x46, 0xE3);
+  return execute_command(0x34, 0x78);
 }
 
 }  // namespace pace_bms
