@@ -47,6 +47,13 @@ namespace esphome {
       void set_pack_remaining_capacity_sensor(sensor::Sensor *sensor) { pack_remaining_capacity_sensor_ = sensor; }
       void set_pack_state_of_health_sensor(sensor::Sensor *sensor) { pack_state_of_health_sensor_ = sensor; }
       void set_pack_state_of_charge_sensor(sensor::Sensor *sensor) { pack_state_of_charge_sensor_ = sensor; }
+      // Nové senzory
+      void set_pack_number_sensor(sensor::Sensor *sensor) { pack_number_sensor_ = sensor; }
+      void set_pack_analog_data_sensor(sensor::Sensor *sensor) { pack_analog_data_sensor_ = sensor; }
+      void set_software_version_sensor(sensor::Sensor *sensor) { software_version_sensor_ = sensor; }
+      void set_serial_number_sensor(sensor::Sensor *sensor) { serial_number_sensor_ = sensor; }
+      void set_pack_capacity_sensor(sensor::Sensor *sensor) { pack_capacity_sensor_ = sensor; }
+      void set_warn_info_sensor(sensor::Sensor *sensor) { warn_info_sensor_ = sensor; }
 
     protected:
       sensor::Sensor *voltage_sensor_{nullptr};
@@ -69,8 +76,11 @@ namespace esphome {
       sensor::Sensor *protection_charge_current_sensor_{nullptr};
       sensor::Sensor *protection_short_circuit_sensor_{nullptr};
       sensor::Sensor *reverse_sensor_{nullptr};
-      std::vector<sensor::Sensor *> cell_voltage_sensors_;
-      std::vector<sensor::Sensor *> temperature_sensors_;
+      //std::vector<sensor::Sensor *> cell_voltage_sensors_;
+      //std::vector<sensor::Sensor *> temperature_sensors_;
+      sensor::Sensor *cell_voltage_sensors_[15]{nullptr};  // Adjust array size to the number of cells
+      sensor::Sensor *temperature_sensors_[6]{nullptr};  // Adjust array size to the number of temperature sensors
+
       sensor::Sensor *balancing_1_sensor_{nullptr};
       sensor::Sensor *balancing_2_sensor_{nullptr};
       sensor::Sensor *warnings_sensor_{nullptr};
@@ -79,7 +89,14 @@ namespace esphome {
       sensor::Sensor *pack_remaining_capacity_sensor_{nullptr};
       sensor::Sensor *pack_state_of_health_sensor_{nullptr};
       sensor::Sensor *pack_state_of_charge_sensor_{nullptr};
-
+      // Nové senzory
+      sensor::Sensor *pack_number_sensor_{nullptr};
+      sensor::Sensor *pack_analog_data_sensor_{nullptr};
+      sensor::Sensor *software_version_sensor_{nullptr};
+      sensor::Sensor *serial_number_sensor_{nullptr};
+      sensor::Sensor *pack_capacity_sensor_{nullptr};
+      sensor::Sensor *warn_info_sensor_{nullptr};
+// blok nize jiz nema byt?
       void read_bms_data_();
       void decode_response_(const std::vector<uint8_t> &data);
       std::map<std::string, float> decode_basic_info_(const std::vector<uint8_t> &data);

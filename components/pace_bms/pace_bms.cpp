@@ -105,6 +105,15 @@ namespace esphome
       this->publish_state_(this->pack_remaining_capacity_sensor_, status["pack_remaining_capacity"]);
       this->publish_state_(this->pack_state_of_health_sensor_, status["pack_state_of_health"]);
       this->publish_state_(this->pack_state_of_charge_sensor_, status["pack_state_of_charge"]);
+      
+      // nove sensory
+      this->publish_state_(this->pack_number_sensor_, status["pack_number"]);
+      this->publish_state_(this->pack_analog_data_sensor_, status["pack_analog_data"]);
+      this->publish_state_(this->software_version_sensor_, status["software_version"]);
+      this->publish_state_(this->serial_number_sensor_, status["serial_number"]);
+      this->publish_state_(this->pack_capacity_sensor_, status["pack_capacity"]);
+      this->publish_state_(this->warn_info_sensor_, status["warn_info"]);
+}
     }
 
     std::map<std::string, float> PaceBMS::decode_basic_info_(const std::vector<uint8_t> &data)

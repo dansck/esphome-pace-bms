@@ -35,6 +35,13 @@ CONF_PACK_FULL_CAPACITY = "pack_full_capacity"
 CONF_PACK_REMAINING_CAPACITY = "pack_remaining_capacity"
 CONF_PACK_STATE_OF_HEALTH = "pack_state_of_health"
 CONF_PACK_STATE_OF_CHARGE = "pack_state_of_charge"
+# Nové senzory
+CONF_PACK_NUMBER = "pack_number"
+CONF_PACK_ANALOG_DATA = "pack_analog_data"
+CONF_SOFTWARE_VERSION = "software_version"
+CONF_SERIAL_NUMBER = "serial_number"
+CONF_PACK_CAPACITY = "pack_capacity"
+CONF_WARN_INFO = "warn_info"
 
 SENSOR_SCHEMA = sensor.sensor_schema()
 
@@ -74,6 +81,13 @@ CONFIG_SCHEMA = cv.Schema({
     cv.Optional(CONF_PACK_REMAINING_CAPACITY): SENSOR_SCHEMA,
     cv.Optional(CONF_PACK_STATE_OF_HEALTH): SENSOR_SCHEMA,
     cv.Optional(CONF_PACK_STATE_OF_CHARGE): SENSOR_SCHEMA,
+    # Nové senzory
+    cv.Optional(CONF_PACK_NUMBER): SENSOR_SCHEMA,
+    cv.Optional(CONF_PACK_ANALOG_DATA): SENSOR_SCHEMA,
+    cv.Optional(CONF_SOFTWARE_VERSION): SENSOR_SCHEMA,
+    cv.Optional(CONF_SERIAL_NUMBER): SENSOR_SCHEMA,
+    cv.Optional(CONF_PACK_CAPACITY): SENSOR_SCHEMA,
+    cv.Optional(CONF_WARN_INFO): SENSOR_SCHEMA,
 })
 
 async def to_code(config):
@@ -138,18 +152,29 @@ async def to_code(config):
     if CONF_TEMPERATURE in config:
         sens = await sensor.new_sensor(config[CONF_TEMPERATURE])
         cg.add(var.set_temperature_sensor(sens))
+            # if CONF_CELL_VOLTAGES in config:
+            #     sens = []
+            #     for i in range(len(config[CONF_CELL_VOLTAGES])):
+            #         s = await sensor.new_sensor(config[CONF_CELL_VOLTAGES][i])
+            #         sens.append(s)
+            #     cg.add(var.set_cell_voltage_sensors(sens))
+            # if CONF_TEMPERATURES in config:
+            #     sens = []
+            #     for i in range(len(config[CONF_TEMPERATURES])):
+            #         s = await sensor.new_sensor(config[CONF_TEMPERATURES][i])
+            #         sens.append(s)
+            #     cg.add(var.set_temperature_sensors(sens))
     if CONF_CELL_VOLTAGES in config:
-        sens = []
-        for i in range(len(config[CONF_CELL_VOLTAGES])):
-            s = await sensor.new_sensor(config[CONF_CELL_VOLTAGES][i])
-            sens.append(s)
-        cg.add(var.set_cell_voltage_sensors(sens))
+        conf = config[CONF_CELL_VOLTAGES]
+        for i, c in enumerate(conf):
+            sens = yield sensor.new_sensor(c)
+            cg.add(var.set_cell_voltage_sensor(i, sens))
+
     if CONF_TEMPERATURES in config:
-        sens = []
-        for i in range(len(config[CONF_TEMPERATURES])):
-            s = await sensor.new_sensor(config[CONF_TEMPERATURES][i])
-            sens.append(s)
-        cg.add(var.set_temperature_sensors(sens))
+        conf = config[CONF_TEMPERATURES]
+        for i, c in enumerate(conf):
+            sens = yield sensor.new_sensor(c)
+            cg.add(var.set_temperature_sensor(i, sens))
     if CONF_BALANCING_1 in config:
         sens = await sensor.new_sensor(config[CONF_BALANCING_1])
         cg.add(var.set_balancing_1_sensor(sens))
@@ -174,3 +199,23 @@ async def to_code(config):
     if CONF_PACK_STATE_OF_CHARGE in config:
         sens = await sensor.new_sensor(config[CONF_PACK_STATE_OF_CHARGE])
         cg.add(var.set_pack_state_of_charge_sensor(sens))
+     # Nové senzory
+    if CONF_PACK_NUMBER in config:
+        sens = yield sensor.new_sensor(config[CONF_PACK_NUMBER])
+        cg.add(var.set_pack_number_sensor(sens))
+    if CONF_PACK_ANALOG_DATA in config:
+        sens = yield sensor.new_sensor(config[CONF_PACK_ANALOG_DATA])
+        cg.add(var.set_pack_analog_data_sensor(sens))
+    if CONF_SOFTWARE_VERSION in config:
+        sens = yield sensor.new_sensor(config[CONF_SOFTWARE_VERSION])
+        cg.add(var.set_software_version_sensor(sens))
+    if CONF_SERIAL_NUMBER in config:
+        sens = yield sensor.new_sensor(config[CONF_SERIAL_NUMBER])
+        cg.add(var.set_serial_number_sensor(sens))
+    if CONF_PACK_CAPACITY in config:
+        sens = yield sensor.new_sensor(config[CONF_PACK_CAPACITY])
+        cg.add(var.set_pack_capacity_sensor(sens))
+    if CONF_WARN_INFO in config:
+        sens = yield sensor.new_sensor(config[CONF_WARN_INFO])
+        cg.add(var.set_warn_info_sensor(sens))
+    
