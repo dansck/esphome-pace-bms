@@ -1,103 +1,105 @@
 #pragma once
 
-#include "pace_bms_constants.h"
 #include "esphome/core/component.h"
-#include "esphome/components/sensor/sensor.h"
 #include "esphome/components/uart/uart.h"
-#include <map>
+#include "esphome/components/sensor/sensor.h"
 #include <vector>
+#include <string>
 
 namespace esphome {
-  namespace pace_bms {
+namespace pace_bms {
 
-    class PaceBMS : public PollingComponent, public uart::UARTDevice {
-    public:
-      void setup() override;
-      void update() override;
+class PaceBMS : public PollingComponent, public uart::UARTDevice {
+ public:
+  void setup() override;
+  void update() override;
 
-      uint16_t get_voltage();
+  // Declare all sensors
+  sensor::Sensor *voltage_sensor = new sensor::Sensor();
+  sensor::Sensor *current_sensor = new sensor::Sensor();
+  sensor::Sensor *remaining_capacity_sensor = new sensor::Sensor();
+  sensor::Sensor *nominal_capacity_sensor = new sensor::Sensor();
+  sensor::Sensor *full_capacity_sensor = new sensor::Sensor();
+  sensor::Sensor *cycles_sensor = new sensor::Sensor();
+  sensor::Sensor *state_of_health_sensor = new sensor::Sensor();
+  sensor::Sensor *state_of_charge_sensor = new sensor::Sensor();
+  sensor::Sensor *cell_max_volt_diff_sensor = new sensor::Sensor();
+  sensor::Sensor *charge_fet_sensor = new sensor::Sensor();
+  sensor::Sensor *discharge_fet_sensor = new sensor::Sensor();
+  sensor::Sensor *ac_in_sensor = new sensor::Sensor();
+  sensor::Sensor *current_limit_sensor = new sensor::Sensor();
+  sensor::Sensor *heart_sensor = new sensor::Sensor();
+  sensor::Sensor *pack_indicate_sensor = new sensor::Sensor();
+  sensor::Sensor *protection_discharge_current_sensor = new sensor::Sensor();
+  sensor::Sensor *protection_charge_current_sensor = new sensor::Sensor();
+  sensor::Sensor *protection_short_circuit_sensor = new sensor::Sensor();
+  sensor::Sensor *reverse_sensor = new sensor::Sensor();
+  sensor::Sensor *temperature_sensor = new sensor::Sensor();
+  sensor::Sensor *cell_voltages_sensor = new sensor::Sensor();
+  sensor::Sensor *temperatures_sensor = new sensor::Sensor();
+  sensor::Sensor *balancing_1_sensor = new sensor::Sensor();
+  sensor::Sensor *balancing_2_sensor = new sensor::Sensor();
+  sensor::Sensor *warnings_sensor = new sensor::Sensor();
+  sensor::Sensor *design_capacity_sensor = new sensor::Sensor();
+  sensor::Sensor *pack_full_capacity_sensor = new sensor::Sensor();
+  sensor::Sensor *pack_remaining_capacity_sensor = new sensor::Sensor();
+  sensor::Sensor *pack_state_of_health_sensor = new sensor::Sensor();
+  sensor::Sensor *pack_state_of_charge_sensor = new sensor::Sensor();
+  sensor::Sensor *pack_number_sensor = new sensor::Sensor();
+  sensor::Sensor *pack_analog_data_sensor = new sensor::Sensor();
+  sensor::Sensor *software_version_sensor = new sensor::Sensor();
+  sensor::Sensor *serial_number_sensor = new sensor::Sensor();
+  sensor::Sensor *pack_capacity_sensor = new sensor::Sensor();
+  sensor::Sensor *warn_info_sensor = new sensor::Sensor();
 
-      void set_voltage_sensor(sensor::Sensor *voltage_sensor) { voltage_sensor_ = voltage_sensor; }
-      void set_current_sensor(sensor::Sensor *current_sensor) { current_sensor_ = current_sensor; }
-      void set_temperature_sensor(sensor::Sensor *temperature_sensor) { temperature_sensor_ = temperature_sensor; }
+ protected:
+  std::pair<bool, std::vector<uint8_t>> bms_request(const uint8_t *ver, const uint8_t *adr, const uint8_t *cid1, const uint8_t *cid2, const std::vector<uint8_t> &info);
+  
+  uint16_t crc16(const uint8_t *data, size_t length);
+  uint8_t lchksum_calc(const std::string &lenid);
+  uint8_t chksum_calc(const std::vector<uint8_t> &data);
+  void send_command(const uint8_t *command, size_t length);
+  std::vector<uint8_t> read_response();
+  uint16_t decode_response(const std::vector<uint8_t> &response);
 
-      void set_remaining_capacity_sensor(sensor::Sensor *sensor) { remaining_capacity_sensor_ = sensor; }
-      void set_nominal_capacity_sensor(sensor::Sensor *sensor) { nominal_capacity_sensor_ = sensor; }
-      void set_full_capacity_sensor(sensor::Sensor *sensor) { full_capacity_sensor_ = sensor; }
-      void set_cycles_sensor(sensor::Sensor *sensor) { cycles_sensor_ = sensor; }
-      void set_state_of_health_sensor(sensor::Sensor *sensor) { state_of_health_sensor_ = sensor; }
-      void set_state_of_charge_sensor(sensor::Sensor *sensor) { state_of_charge_sensor_ = sensor; }
-      void set_cell_max_volt_diff_sensor(sensor::Sensor *sensor) { cell_max_volt_diff_sensor_ = sensor; }
-      void set_charge_fet_sensor(sensor::Sensor *sensor) { charge_fet_sensor_ = sensor; }
-      void set_discharge_fet_sensor(sensor::Sensor *sensor) { discharge_fet_sensor_ = sensor; }
-      void set_ac_in_sensor(sensor::Sensor *sensor) { ac_in_sensor_ = sensor; }
-      void set_current_limit_sensor(sensor::Sensor *sensor) { current_limit_sensor_ = sensor; }
-      void set_heart_sensor(sensor::Sensor *sensor) { heart_sensor_ = sensor; }
-      void set_pack_indicate_sensor(sensor::Sensor *sensor) { pack_indicate_sensor_ = sensor; }
-      void set_protection_discharge_current_sensor(sensor::Sensor *sensor) { protection_discharge_current_sensor_ = sensor; }
-      void set_protection_charge_current_sensor(sensor::Sensor *sensor) { protection_charge_current_sensor_ = sensor; }
-      void set_protection_short_circuit_sensor(sensor::Sensor *sensor) { protection_short_circuit_sensor_ = sensor; }
-      void set_reverse_sensor(sensor::Sensor *sensor) { reverse_sensor_ = sensor; }
+  // Methods to retrieve sensor data
+  uint16_t get_voltage();
+  uint16_t get_current();
+  uint16_t get_remaining_capacity();
+  uint16_t get_nominal_capacity();
+  uint16_t get_full_capacity();
+  uint16_t get_cycles();
+  uint16_t get_state_of_health();
+  uint16_t get_state_of_charge();
+  uint16_t get_cell_max_volt_diff();
+  uint16_t get_charge_fet();
+  uint16_t get_discharge_fet();
+  uint16_t get_ac_in();
+  uint16_t get_current_limit();
+  uint16_t get_heart();
+  uint16_t get_pack_indicate();
+  uint16_t get_protection_discharge_current();
+  uint16_t get_protection_charge_current();
+  uint16_t get_protection_short_circuit();
+  uint16_t get_reverse();
+  uint16_t get_temperature();
+  uint16_t get_cell_voltages();
+  uint16_t get_temperatures();
+  uint16_t get_balancing_1();
+  uint16_t get_balancing_2();
+  uint16_t get_warnings();
+  uint16_t get_design_capacity();
+  uint16_t get_pack_full_capacity();
+  uint16_t get_pack_remaining_capacity();
+  uint16_t get_pack_state_of_health();
+  uint16_t get_pack_state_of_charge();
+  uint16_t get_pack_number();
+  uint16_t get_pack_analog_data();
+  uint16_t get_software_version();
+  uint16_t get_serial_number();
+  uint16_t get_pack_capacity();
+  uint16_t get_warn_info();
+};
 
-      void set_cell_voltage_sensors(const std::vector<sensor::Sensor *> &sensors) { cell_voltage_sensors_ = sensors; }
-      void set_temperature_sensors(const std::vector<sensor::Sensor *> &sensors) { temperature_sensors_ = sensors; }
-
-      void set_balancing_1_sensor(sensor::Sensor *sensor) { balancing_1_sensor_ = sensor; }
-      void set_balancing_2_sensor(sensor::Sensor *sensor) { balancing_2_sensor_ = sensor; }
-      void set_warnings_sensor(sensor::Sensor *sensor) { warnings_sensor_ = sensor; }
-      void set_design_capacity_sensor(sensor::Sensor *sensor) { design_capacity_sensor_ = sensor; }
-      void set_pack_full_capacity_sensor(sensor::Sensor *sensor) { pack_full_capacity_sensor_ = sensor; }
-      void set_pack_remaining_capacity_sensor(sensor::Sensor *sensor) { pack_remaining_capacity_sensor_ = sensor; }
-      void set_pack_state_of_health_sensor(sensor::Sensor *sensor) { pack_state_of_health_sensor_ = sensor; }
-      void set_pack_state_of_charge_sensor(sensor::Sensor *sensor) { pack_state_of_charge_sensor_ = sensor; }
-
-    protected:
-      sensor::Sensor *voltage_sensor_{nullptr};
-      sensor::Sensor *current_sensor_{nullptr};
-      sensor::Sensor *temperature_sensor_{nullptr};
-      sensor::Sensor *remaining_capacity_sensor_{nullptr};
-      sensor::Sensor *nominal_capacity_sensor_{nullptr};
-      sensor::Sensor *full_capacity_sensor_{nullptr};
-      sensor::Sensor *cycles_sensor_{nullptr};
-      sensor::Sensor *state_of_health_sensor_{nullptr};
-      sensor::Sensor *state_of_charge_sensor_{nullptr};
-      sensor::Sensor *cell_max_volt_diff_sensor_{nullptr};
-      sensor::Sensor *charge_fet_sensor_{nullptr};
-      sensor::Sensor *discharge_fet_sensor_{nullptr};
-      sensor::Sensor *ac_in_sensor_{nullptr};
-      sensor::Sensor *current_limit_sensor_{nullptr};
-      sensor::Sensor *heart_sensor_{nullptr};
-      sensor::Sensor *pack_indicate_sensor_{nullptr};
-      sensor::Sensor *protection_discharge_current_sensor_{nullptr};
-      sensor::Sensor *protection_charge_current_sensor_{nullptr};
-      sensor::Sensor *protection_short_circuit_sensor_{nullptr};
-      sensor::Sensor *reverse_sensor_{nullptr};
-      std::vector<sensor::Sensor *> cell_voltage_sensors_;
-      std::vector<sensor::Sensor *> temperature_sensors_;
-      sensor::Sensor *balancing_1_sensor_{nullptr};
-      sensor::Sensor *balancing_2_sensor_{nullptr};
-      sensor::Sensor *warnings_sensor_{nullptr};
-      sensor::Sensor *design_capacity_sensor_{nullptr};
-      sensor::Sensor *pack_full_capacity_sensor_{nullptr};
-      sensor::Sensor *pack_remaining_capacity_sensor_{nullptr};
-      sensor::Sensor *pack_state_of_health_sensor_{nullptr};
-      sensor::Sensor *pack_state_of_charge_sensor_{nullptr};
-
-      void read_bms_data_();
-      void decode_response_(const std::vector<uint8_t> &data);
-      std::map<std::string, float> decode_basic_info_(const std::vector<uint8_t> &data);
-      std::vector<float> decode_cell_voltage_(const std::vector<uint8_t> &data);
-      float decode_cell_max_volt_diff_(const std::vector<uint8_t> &data);
-      std::vector<float> decode_temperature_(const std::vector<uint8_t> &data);
-      std::map<std::string, float> decode_mosfet_status_(const std::vector<uint8_t> &data);
-      std::map<std::string, float> decode_status_(const std::vector<uint8_t> &data);
-      void publish_state_(sensor::Sensor *sensor, float value);
-
-      uint16_t crc16(const uint8_t *data, size_t length);
-      void send_command(const uint8_t *command, size_t length);
-      std::vector<uint8_t> read_response();
-      uint16_t decode_response(const std::vector<uint8_t> &response);
-    };
-
-  } // namespace pace_bms
-} // namespace esphome
+}  // namespace pace_bms
+}  // namespace esphome
