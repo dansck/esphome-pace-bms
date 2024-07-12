@@ -1,7 +1,9 @@
+#include "esphome.h"
 #include "pace_bms.h"
 #include "esphome/core/log.h"
 #include <map>
 #include <vector>
+#include <stdint.h>
 
 namespace esphome
 {
@@ -19,29 +21,101 @@ namespace esphome
 
     void PaceBMS::update()
     {
-      this->read_bms_data_();
+      //this->read_bms_data_();
+      ESP_LOGI(TAG, "Updating PaceBMS...");
+      uint16_t voltage = get_voltage();
+      ESP_LOGI(TAG, "Voltage: %d", voltage);
     }
 
-    void PaceBMS::read_bms_data_()
-    {
-      // Create and send the request to read data
-      std::vector<uint8_t> request = {0x10, 0x02, 0xF0, 0x0D}; // Request may differ depending on BMS
-      this->write_array(request);
-      this->flush(); // Clear the buffer for reading the response
-
-      std::vector<uint8_t> response(256);
-      size_t len = this->read_array(response.data(), response.size());
-
-      if (len > 0)
-      {
-        // Process the response
-        this->decode_response_(response);
-      }
+    // CRC-16 výpočet
+uint16_t PaceBMS::crc16(const uint8_t *data, size_t length) {
+  uint16_t crc = 0xFFFF;
+  for (size_t i = 0; i < length; i++) {
+    crc ^= data[i];
+    for (int j = 0; j < 8; j++) {
+      if (crc & 1)
+        crc = (crc >> 1) ^ 0xA001;
       else
-      {
-        ESP_LOGW(TAG, "No response from BMS");
-      }
+        crc >>= 1;
     }
+  }
+  return crc;
+}
+void PaceBMS::send_command(const uint8_t *command, size_t length) {
+    // Odeslání příkazu
+    this->write_array(command, length);
+    ESP_LOGD(TAG, "Sent command: %s", format_hex_pretty(command, length).c_str());
+}
+
+    // Čekání na odpověď
+    
+//    std::vector<uint8_t> response = this->read_response();
+//    if (!response.empty()) {
+        // Zpracování odpovědi
+//        this->decode_response(response);
+ //   }
+//}
+
+std::vector<uint8_t> PaceBMS::read_response() {
+    std::vector<uint8_t> response;
+    while (this->available()) {
+        response.push_back(this->read());
+    }
+    // Log the received response for debugging
+    ESP_LOGD(TAG, "Received response: %s", format_hex_pretty(response).c_str());
+    return response;
+}
+
+void PaceBMS::decode_response(const std::vector<uint8_t> &response) {
+    // Rozbor odpovědi z BMS
+    if (response.size() < 2) {
+        ESP_LOGE("PaceBMS", "Neplatná délka odpovědi");
+        return 0;
+    }
+
+    uint16_t received_crc = (response[response.size() - 2] << 8) | response[response.size() - 1];
+    uint16_t calculated_crc = crc16(response.data(), response.size() - 2);
+
+    if (received_crc != calculated_crc) {
+        ESP_LOGE("PaceBMS", "Neplatná CRC kontrola");
+        return 0;
+    }
+     uint16_t value = (response[0] << 8) | response[1];
+     return value;
+
+    // Zpracování dalších dat z odpovědi
+   // ESP_LOGI("PaceBMS", "Odpověď přijata: %s", format_hex_pretty(response).c_str());
+}
+
+    // void PaceBMS::read_bms_data_()
+    // {
+    //   // Create and send the request to read data
+    //   std::vector<uint8_t> request = {0x10, 0x02, 0xF0, 0x0D}; // Request may differ depending on BMS
+    //   this->write_array(request);
+    //   this->flush(); // Clear the buffer for reading the response
+
+    //   std::vector<uint8_t> response(256);
+    //   size_t len = this->read_array(response.data(), response.size());
+
+    //   if (len > 0)
+    //   {
+    //     // Process the response
+    //     this->decode_response_(response);
+    //   }
+    //   else
+    //   {
+    //     ESP_LOGW(TAG, "No response from BMS");
+    //   }
+    // }
+uint16_t PaceBMS::get_voltage() {
+  const uint8_t command[] = {0x00, 0x01};
+  send_command(command, sizeof(command));
+  std::vector<uint8_t> response = read_response();
+  if (response.size() >= 2) {
+    return decode_response(response);
+  }
+  return 0;
+}
 
     void PaceBMS::decode_response_(const std::vector<uint8_t> &data)
     {

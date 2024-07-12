@@ -1,5 +1,6 @@
 #pragma once
 
+#include "pace_bms_constants.h"
 #include "esphome/core/component.h"
 #include "esphome/components/sensor/sensor.h"
 #include "esphome/components/uart/uart.h"
@@ -13,6 +14,8 @@ namespace esphome {
     public:
       void setup() override;
       void update() override;
+
+      uint16_t get_voltage();
 
       void set_voltage_sensor(sensor::Sensor *voltage_sensor) { voltage_sensor_ = voltage_sensor; }
       void set_current_sensor(sensor::Sensor *current_sensor) { current_sensor_ = current_sensor; }
@@ -89,6 +92,11 @@ namespace esphome {
       std::map<std::string, float> decode_mosfet_status_(const std::vector<uint8_t> &data);
       std::map<std::string, float> decode_status_(const std::vector<uint8_t> &data);
       void publish_state_(sensor::Sensor *sensor, float value);
+
+      uint16_t crc16(const uint8_t *data, size_t length);
+      void send_command(const uint8_t *command, size_t length);
+      std::vector<uint8_t> read_response();
+      uint16_t decode_response(const std::vector<uint8_t> &response);
     };
 
   } // namespace pace_bms
