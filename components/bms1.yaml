@@ -26,8 +26,8 @@ wifi:
 external_components:
   - source:
       type: git
-      url: https://github.com/dansck/esphome-pace-bms
-      ref: main
+      url: file:///Users/ds/src/esphome-pace-bms/
+      ref: dev1
     components: [pace_bms]
     refresh: "10s"
 
@@ -52,41 +52,42 @@ sensor:
     current:
       name: "BMS Current"
     remaining_capacity:
-      name: "Remaining Capacity"
+      name: "BMS Remaining Capacity"
     nominal_capacity:
-      name: "Nominal Capacity"
+      name: "BMS Nominal Capacity"
     full_capacity:
-      name: "Full Capacity"
+      name: "BMS Full Capacity"
     cycles:
-      name: "Cycles"
+      name: "BMS Cycles"
     state_of_health:
-      name: "State of Health"
+      name: "BMS State of Health"
     state_of_charge:
-      name: "State of Charge"
+      name: "BMS State of Charge"
     cell_max_volt_diff:
-      name: "Max Voltage Difference"
+      name: "BMS Cell Max Voltage Difference"
     charge_fet:
-      name: "Charge FET"
+      name: "BMS Charge FET"
     discharge_fet:
-      name: "Discharge FET"
+      name: "BMS Discharge FET"
     ac_in:
-      name: "AC In"
+      name: "BMS AC In"
     current_limit:
-      name: "Current Limit"
+      name: "BMS Current Limit"
     heart:
-      name: "Heart"
+      name: "BMS Heart"
     pack_indicate:
-      name: "Pack Indicate"
+      name: "BMS Pack Indicate"
     protection_discharge_current:
-      name: "Protection Discharge Current"
+      name: "BMS Protection Discharge Current"
     protection_charge_current:
-      name: "Protection Charge Current"
+      name: "BMS Protection Charge Current"
     protection_short_circuit:
-      name: "Protection Short Circuit"
+      name: "BMS Protection Short Circuit"
     reverse:
-      name: "Reverse"
+      name: "BMS Reverse"
     temperature:
       name: "BMS Temperature"
+
     cell_voltages:
       - name: "Pack 1 Cell 1 Voltage"
       - name: "Pack 1 Cell 2 Voltage"
@@ -111,18 +112,31 @@ sensor:
       - name: "Pack 1 Temperature 5"
       - name: "Pack 1 Temperature 6"
     balancing_1:
-      name: "Pack 1 Balancing 1"
+      name: "BMS Balancing 1"
     balancing_2:
-      name: "Pack 1 Balancing 2"
+      name: "BMS Balancing 2"
     warnings:
-      name: "Pack 1 Warnings"
+      name: "BMS Warnings"
     design_capacity:
-      name: "Pack Design Capacity"
+      name: "BMS Design Capacity"
     pack_full_capacity:
-      name: "Pack Full Capacity"
+      name: "BMS Pack Full Capacity"
     pack_remaining_capacity:
-      name: "Pack Remaining Capacity"
+      name: "BMS Pack Remaining Capacity"
     pack_state_of_health:
-      name: "Pack State of Health"
+      name: "BMS Pack State of Health"
     pack_state_of_charge:
-      name: "Pack State of Charge"
+      name: "BMS Pack State of Charge"
+    pack_number:
+      name: "BMS Pack Number"
+    pack_analog_data:
+      name: "BMS Pack Analog Data"
+    software_version:
+      name: "BMS Software Version"
+    serial_number:
+      name: "BMS Serial Number"
+    pack_capacity:
+      name: "BMS Pack Capacity"
+    warn_info:
+      name: "BMS Warn Info"
+
