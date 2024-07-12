@@ -200,7 +200,7 @@ async def to_code(config):
         cg.add(var.set_pack_number_sensor(sens))
     if CONF_PACK_ANALOG_DATA in config:
         sens = await sensor.new_sensor(config[CONF_PACK_ANALOG_DATA])
-        cg.add(var.set_pack_number_sensor(sens))
+        cg.add(var.set_pack_analog_data_sensor(sens))
     if CONF_SOFTWARE_VERSION in config:
         sens = await sensor.new_sensor(config[CONF_SOFTWARE_VERSION])
         cg.add(var.set_software_version_sensor(sens))
