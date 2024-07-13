@@ -1,6 +1,6 @@
 esphome:
-  name: bms
-  friendly_name: bms
+  name: bms1
+  friendly_name: bms1
 
 esp32:
   board: esp32dev
@@ -13,23 +13,26 @@ logger:
 # Enable Home Assistant API
 api:
   encryption:
-    key: "0Sn0wgXKEwOjMs+RkyTEYg9w9D/+4kHGzUqM1EsdT+0="
+    key: !secret api_key
 
 ota:
   platform: esphome
-  password: "f6cee402ca670c47e4d937fadc0661c8"
+  password: !secret ota_password
 
 wifi:
   ssid: !secret wifi_ssid
   password: !secret wifi_password
+  domain: !secret wifi_domain
 
 external_components:
   - source:
-      type: git
-      url: file:///Users/ds/src/esphome-pace-bms/
-      ref: dev1
+#      type: git
+#      url: https://github.com/dansck/esphome-pace-bms
+#      ref: dev1
+      type: local
+      path: .
     components: [pace_bms]
-    refresh: "10s"
+    #refresh: "10s"
 
 uart:
   - id: uart_bus
@@ -85,8 +88,6 @@ sensor:
       name: "BMS Protection Short Circuit"
     reverse:
       name: "BMS Reverse"
-    temperature:
-      name: "BMS Temperature"
 
     cell_voltages:
       - name: "Pack 1 Cell 1 Voltage"
@@ -111,6 +112,29 @@ sensor:
       - name: "Pack 1 Temperature 4"
       - name: "Pack 1 Temperature 5"
       - name: "Pack 1 Temperature 6"
+    # cell_voltages:
+    #   - sensor: sensor_sensor_id_20
+    #   - sensor: sensor_sensor_id_21
+    #   - sensor: sensor_sensor_id_22
+    #   - sensor: sensor_sensor_id_23
+    #   - sensor: sensor_sensor_id_24
+    #   - sensor: sensor_sensor_id_25
+    #   - sensor: sensor_sensor_id_26
+    #   - sensor: sensor_sensor_id_27
+    #   - sensor: sensor_sensor_id_28
+    #   - sensor: sensor_sensor_id_29
+    #   - sensor: sensor_sensor_id_30
+    #   - sensor: sensor_sensor_id_31
+    #   - sensor: sensor_sensor_id_32
+    #   - sensor: sensor_sensor_id_33
+    #   - sensor: sensor_sensor_id_34
+    # temperatures:
+    #   - sensor: sensor_sensor_id_35
+    #   - sensor: sensor_sensor_id_36
+    #   - sensor: sensor_sensor_id_37
+    #   - sensor: sensor_sensor_id_38
+    #   - sensor: sensor_sensor_id_39
+    #   - sensor: sensor_sensor_id_40
     balancing_1:
       name: "BMS Balancing 1"
     balancing_2:

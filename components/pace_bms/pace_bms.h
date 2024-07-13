@@ -1,17 +1,18 @@
-#pragma once
-
-#include "esphome.h"
-#include <vector>
+#include "esphome/components/uart/uart.h"
+#include "esphome/components/sensor/sensor.h"
 
 namespace esphome {
 namespace pace_bms {
 
-class PaceBMS : public Component, public UARTDevice {
+class PaceBMS : public PollingComponent, public uart::UARTDevice {
  public:
-  PaceBMS(UARTComponent *parent) : UARTDevice(parent) {}
-
+  void setup() override;
   void update() override;
-
+  void add_cell_voltage_sensors(const std::vector<sensor::Sensor *> &sensors);
+  void add_temperature_sensors(const std::vector<sensor::Sensor *> &sensors); 
+  void add_cell_voltage_sensor(sensor::Sensor *sensor);
+  void add_temperature_sensor(sensor::Sensor *sensor);
+  
   void set_voltage_sensor(sensor::Sensor *sensor) { voltage_sensor = sensor; }
   void set_current_sensor(sensor::Sensor *sensor) { current_sensor = sensor; }
   void set_remaining_capacity_sensor(sensor::Sensor *sensor) { remaining_capacity_sensor = sensor; }
@@ -46,12 +47,48 @@ class PaceBMS : public Component, public UARTDevice {
   void set_pack_capacity_sensor(sensor::Sensor *sensor) { pack_capacity_sensor = sensor; }
   void set_warn_info_sensor(sensor::Sensor *sensor) { warn_info_sensor = sensor; }
 
-  void add_cell_voltage_sensor(sensor::Sensor *sensor) { cell_voltages_sensors.push_back(sensor); }
-  void add_temperature_sensor(sensor::Sensor *sensor) { temperatures_sensors.push_back(sensor); }
+ protected:
+  sensor::Sensor *voltage_sensor{nullptr};
+  sensor::Sensor *current_sensor{nullptr};
+  sensor::Sensor *remaining_capacity_sensor{nullptr};
+  sensor::Sensor *nominal_capacity_sensor{nullptr};
+  sensor::Sensor *full_capacity_sensor{nullptr};
+  sensor::Sensor *cycles_sensor{nullptr};
+  sensor::Sensor *state_of_health_sensor{nullptr};
+  sensor::Sensor *state_of_charge_sensor{nullptr};
+  sensor::Sensor *cell_max_volt_diff_sensor{nullptr};
+  sensor::Sensor *charge_fet_sensor{nullptr};
+  sensor::Sensor *discharge_fet_sensor{nullptr};
+  sensor::Sensor *ac_in_sensor{nullptr};
+  sensor::Sensor *current_limit_sensor{nullptr};
+  sensor::Sensor *heart_sensor{nullptr};
+  sensor::Sensor *pack_indicate_sensor{nullptr};
+  sensor::Sensor *protection_discharge_current_sensor{nullptr};
+  sensor::Sensor *protection_charge_current_sensor{nullptr};
+  sensor::Sensor *protection_short_circuit_sensor{nullptr};
+  sensor::Sensor *reverse_sensor{nullptr};
+  sensor::Sensor *balancing_1_sensor{nullptr};
+  sensor::Sensor *balancing_2_sensor{nullptr};
+  sensor::Sensor *warnings_sensor{nullptr};
+  sensor::Sensor *design_capacity_sensor{nullptr};
+  sensor::Sensor *pack_full_capacity_sensor{nullptr};
+  sensor::Sensor *pack_remaining_capacity_sensor{nullptr};
+  sensor::Sensor *pack_state_of_health_sensor{nullptr};
+  sensor::Sensor *pack_state_of_charge_sensor{nullptr};
+  sensor::Sensor *pack_number_sensor{nullptr};
+  sensor::Sensor *pack_analog_data_sensor{nullptr};
+  sensor::Sensor *software_version_sensor{nullptr};
+  sensor::Sensor *serial_number_sensor{nullptr};
+  sensor::Sensor *pack_capacity_sensor{nullptr};
+  sensor::Sensor *warn_info_sensor{nullptr};
+  std::vector<sensor::Sensor *> cell_voltages_sensors;
+  std::vector<sensor::Sensor *> temperatures_sensors;
 
- private:
+  void send_command(const std::vector<unsigned char> &command);
+  std::vector<unsigned char> read_response();
   void publish_sensor_state(uint16_t value, sensor::Sensor *sensor, const char *sensor_name, int index = -1);
-  uint16_t execute_command(uint8_t cid1, uint8_t cid2, uint8_t idx = 0);
+
+  uint16_t execute_command(uint8_t cid1, uint8_t cid2, uint8_t idx = 0x00);
   uint16_t get_voltage();
   uint16_t get_current();
   uint16_t get_remaining_capacity();
@@ -87,43 +124,6 @@ class PaceBMS : public Component, public UARTDevice {
   uint16_t get_serial_number();
   uint16_t get_pack_capacity();
   uint16_t get_warn_info();
-
-  sensor::Sensor *voltage_sensor{nullptr};
-  sensor::Sensor *current_sensor{nullptr};
-  sensor::Sensor *remaining_capacity_sensor{nullptr};
-  sensor::Sensor *nominal_capacity_sensor{nullptr};
-  sensor::Sensor *full_capacity_sensor{nullptr};
-  sensor::Sensor *cycles_sensor{nullptr};
-  sensor::Sensor *state_of_health_sensor{nullptr};
-  sensor::Sensor *state_of_charge_sensor{nullptr};
-  sensor::Sensor *cell_max_volt_diff_sensor{nullptr};
-  sensor::Sensor *charge_fet_sensor{nullptr};
-  sensor::Sensor *discharge_fet_sensor{nullptr};
-  sensor::Sensor *ac_in_sensor{nullptr};
-  sensor::Sensor *current_limit_sensor{nullptr};
-  sensor::Sensor *heart_sensor{nullptr};
-  sensor::Sensor *pack_indicate_sensor{nullptr};
-  sensor::Sensor *protection_discharge_current_sensor{nullptr};
-  sensor::Sensor *protection_charge_current_sensor{nullptr};
-  sensor::Sensor *protection_short_circuit_sensor{nullptr};
-  sensor::Sensor *reverse_sensor{nullptr};
-  sensor::Sensor *balancing_1_sensor{nullptr};
-  sensor::Sensor *balancing_2_sensor{nullptr};
-  sensor::Sensor *warnings_sensor{nullptr};
-  sensor::Sensor *design_capacity_sensor{nullptr};
-  sensor::Sensor *pack_full_capacity_sensor{nullptr};
-  sensor::Sensor *pack_remaining_capacity_sensor{nullptr};
-  sensor::Sensor *pack_state_of_health_sensor{nullptr};
-  sensor::Sensor *pack_state_of_charge_sensor{nullptr};
-  sensor::Sensor *pack_number_sensor{nullptr};
-  sensor::Sensor *pack_analog_data_sensor{nullptr};
-  sensor::Sensor *software_version_sensor{nullptr};
-  sensor::Sensor *serial_number_sensor{nullptr};
-  sensor::Sensor *pack_capacity_sensor{nullptr};
-  sensor::Sensor *warn_info_sensor{nullptr};
-
-  std::vector<sensor::Sensor *> cell_voltages_sensors;
-  std::vector<sensor::Sensor *> temperatures_sensors;
 };
 
 }  // namespace pace_bms

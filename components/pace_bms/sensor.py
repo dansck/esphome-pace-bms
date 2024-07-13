@@ -24,7 +24,6 @@ CONF_PROTECTION_DISCHARGE_CURRENT = "protection_discharge_current"
 CONF_PROTECTION_CHARGE_CURRENT = "protection_charge_current"
 CONF_PROTECTION_SHORT_CIRCUIT = "protection_short_circuit"
 CONF_REVERSE = "reverse"
-CONF_TEMPERATURE = "temperature"
 CONF_CELL_VOLTAGES = "cell_voltages"
 CONF_TEMPERATURES = "temperatures"
 CONF_BALANCING_1 = "balancing_1"
@@ -66,13 +65,15 @@ CONFIG_SCHEMA = cv.Schema({
     cv.Optional(CONF_PROTECTION_CHARGE_CURRENT): SENSOR_SCHEMA,
     cv.Optional(CONF_PROTECTION_SHORT_CIRCUIT): SENSOR_SCHEMA,
     cv.Optional(CONF_REVERSE): SENSOR_SCHEMA,
-    cv.Optional(CONF_TEMPERATURE): SENSOR_SCHEMA,
-    cv.Optional(CONF_CELL_VOLTAGES): cv.All(
-        cv.ensure_list(SENSOR_SCHEMA), cv.Length(min=1)
-    ),
-    cv.Optional(CONF_TEMPERATURES): cv.All(
-        cv.ensure_list(SENSOR_SCHEMA), cv.Length(min=1)
-    ),
+    # cv.Optional(CONF_CELL_VOLTAGES): cv.All(
+    #     cv.ensure_list(SENSOR_SCHEMA), cv.Length(min=1)
+    # ),
+    # cv.Optional(CONF_TEMPERATURES): cv.All(
+    #     cv.ensure_list(SENSOR_SCHEMA), cv.Length(min=1)
+    # ),
+    cv.Optional(CONF_CELL_VOLTAGES): cv.ensure_list(sensor.sensor_schema()),
+    cv.Optional(CONF_TEMPERATURES): cv.ensure_list(sensor.sensor_schema()),
+
     cv.Optional(CONF_BALANCING_1): SENSOR_SCHEMA,
     cv.Optional(CONF_BALANCING_2): SENSOR_SCHEMA,
     cv.Optional(CONF_WARNINGS): SENSOR_SCHEMA,
@@ -81,12 +82,12 @@ CONFIG_SCHEMA = cv.Schema({
     cv.Optional(CONF_PACK_REMAINING_CAPACITY): SENSOR_SCHEMA,
     cv.Optional(CONF_PACK_STATE_OF_HEALTH): SENSOR_SCHEMA,
     cv.Optional(CONF_PACK_STATE_OF_CHARGE): SENSOR_SCHEMA,
-    cv.Optional(CONF_PACK_NUMBER): sensor.sensor_schema,
-    cv.Optional(CONF_PACK_ANALOG_DATA): sensor.sensor_schema,
-    cv.Optional(CONF_SOFTWARE_VERSION): sensor.sensor_schema,
-    cv.Optional(CONF_SERIAL_NUMBER): sensor.sensor_schema,
-    cv.Optional(CONF_PACK_CAPACITY): sensor.sensor_schema,
-    cv.Optional(CONF_WARN_INFO): sensor.sensor_schema,
+    cv.Optional(CONF_PACK_NUMBER): SENSOR_SCHEMA,
+    cv.Optional(CONF_PACK_ANALOG_DATA): SENSOR_SCHEMA,
+    cv.Optional(CONF_SOFTWARE_VERSION): SENSOR_SCHEMA,
+    cv.Optional(CONF_SERIAL_NUMBER): SENSOR_SCHEMA,
+    cv.Optional(CONF_PACK_CAPACITY): SENSOR_SCHEMA,
+    cv.Optional(CONF_WARN_INFO): SENSOR_SCHEMA,
 })
 
 async def to_code(config):
@@ -148,21 +149,30 @@ async def to_code(config):
     if CONF_REVERSE in config:
         sens = await sensor.new_sensor(config[CONF_REVERSE])
         cg.add(var.set_reverse_sensor(sens))
-    if CONF_TEMPERATURE in config:
-        sens = await sensor.new_sensor(config[CONF_TEMPERATURE])
-        cg.add(var.set_temperature_sensor(sens))
+    # if CONF_CELL_VOLTAGES in config:
+    #     sens = []
+    #     for i in range(len(config[CONF_CELL_VOLTAGES])):
+    #         s = await sensor.new_sensor(config[CONF_CELL_VOLTAGES][i])
+    #         sens.append(s)
+    #     cg.add(var.add_cell_voltage_sensor(sens))
+    # if CONF_TEMPERATURES in config:
+    #     sens = []
+    #     for i in range(len(config[CONF_TEMPERATURES])):
+    #         s = await sensor.new_sensor(config[CONF_TEMPERATURES][i])
+    #         sens.append(s)
+    #     cg.add(var.add_temperature_sensor(sens))
     if CONF_CELL_VOLTAGES in config:
-        sens = []
-        for i in range(len(config[CONF_CELL_VOLTAGES])):
-            s = await sensor.new_sensor(config[CONF_CELL_VOLTAGES][i])
-            sens.append(s)
-        cg.add(var.set_cell_voltage_sensors(sens))
+        sensors = []
+        for sensor_conf in config[CONF_CELL_VOLTAGES]:
+            sensors.append(await sensor.new_sensor(sensor_conf))
+        cg.add(var.add_cell_voltage_sensors(sensors))
+
     if CONF_TEMPERATURES in config:
-        sens = []
-        for i in range(len(config[CONF_TEMPERATURES])):
-            s = await sensor.new_sensor(config[CONF_TEMPERATURES][i])
-            sens.append(s)
-        cg.add(var.set_temperature_sensors(sens))
+        sensors = []
+        for sensor_conf in config[CONF_TEMPERATURES]:
+            sensors.append(await sensor.new_sensor(sensor_conf))
+        cg.add(var.add_temperature_sensors(sensors))
+    
     if CONF_BALANCING_1 in config:
         sens = await sensor.new_sensor(config[CONF_BALANCING_1])
         cg.add(var.set_balancing_1_sensor(sens))
