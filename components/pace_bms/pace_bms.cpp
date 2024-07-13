@@ -5,6 +5,7 @@ namespace esphome {
 namespace pace_bms {
 
 static const char *TAG = "pace_bms";
+static const unsigned long RESPONSE_TIMEOUT_MS = 1000; // 1 second timeout
 
 void PaceBMS::setup() {
   ESP_LOGCONFIG(TAG, "Setting up Pace BMS...");
@@ -51,6 +52,8 @@ void PaceBMS::update() {
   for (size_t i = 0; i < this->temperatures_sensors.size(); i++) {
     publish_sensor_state(get_temperature(i), this->temperatures_sensors[i], "Temperature", i);
   }
+  // Wait after reading all sensors
+  delay(5000); // Wait 5000ms (5 second) before the next update
 }
 
 void PaceBMS::send_command(const std::vector<unsigned char> &command) {
@@ -61,10 +64,19 @@ void PaceBMS::send_command(const std::vector<unsigned char> &command) {
 
 std::vector<unsigned char> PaceBMS::read_response() {
   std::vector<unsigned char> response;
-  while (this->available()) {
-    response.push_back(this->read());
+  unsigned long start_time = millis(); // Record the start time
+
+  while (millis() - start_time < RESPONSE_TIMEOUT_MS) { // Check for timeout
+    while (this->available()) {
+      response.push_back(this->read()); // Read available bytes
+    }
+    if (response.size() > 0) {
+      break; // Exit if we've received data
+    }
+    delay(10); // Small delay to avoid busy waiting
   }
-  return response;
+
+  return response; // Return the collected response
 }
 
 void PaceBMS::publish_sensor_state(uint16_t value, sensor::Sensor *sensor, const char *sensor_name, int index) {
@@ -82,11 +94,14 @@ void PaceBMS::publish_sensor_state(uint16_t value, sensor::Sensor *sensor, const
 uint16_t PaceBMS::execute_command(uint8_t cid1, uint8_t cid2, uint8_t idx) {
   std::vector<unsigned char> command = {0xDD, 0xA5, cid1, cid2, idx, 0x00, 0xFF, 0xFD, 0x77};
   this->send_command(command);
+  // Wait for a response
   std::vector<unsigned char> response = this->read_response();
+  // Check response validity
   if (response.size() < 5) {
     ESP_LOGW(TAG, "Invalid response size: %d", response.size());
     return 0;
   }
+  // Process the response data
   return (response[3] << 8) | response[4];
 }
 
